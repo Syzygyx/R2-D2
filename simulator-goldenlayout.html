@@ -227,7 +227,7 @@
     </div>
 
     <!-- Local GoldenLayout JavaScript -->
-    <script src="lib/goldenlayout/goldenlayout.min.js"></script>
+    <script src="lib/goldenlayout/goldenlayout.js"></script>
 
     <script>
         // SITH Simulator with Local GoldenLayout
@@ -340,8 +340,9 @@
 
                     this.updateLoadingText('Creating GoldenLayout instance...');
                     
-                    // Create GoldenLayout instance
-                    this.layout = new GoldenLayout(config, '#mainContainer');
+                    // Create GoldenLayout instance with proper initialization
+                    this.layout = new GoldenLayout(config);
+                    this.layout.init();
 
                     this.updateLoadingText('Registering components...');
 
@@ -398,10 +399,10 @@
                         container.getElement().append(iframe);
                     });
 
-                    this.updateLoadingText('Initializing layout...');
+                    this.updateLoadingText('Mounting layout...');
 
-                    // Initialize the layout
-                    this.layout.init();
+                    // Mount the layout to the container
+                    this.layout.mount('#mainContainer');
 
                     this.updateLoadingText('Simulator ready!');
                     
@@ -411,14 +412,45 @@
                     }, 1000);
 
                 } catch (error) {
-                    console.error('Error initializing simulator:', error);
-                    this.updateLoadingText(`Error: ${error.message}`);
+                    console.error('Error initializing GoldenLayout:', error);
+                    this.updateLoadingText('GoldenLayout failed, using fallback layout...');
                     
-                    // Show error message
+                    // Fallback to simple grid layout
                     setTimeout(() => {
-                        this.updateLoadingText('Failed to load simulator. Please refresh the page.');
-                    }, 2000);
+                        this.createFallbackLayout();
+                    }, 1000);
                 }
+            }
+
+            createFallbackLayout() {
+                this.updateLoadingText('Creating fallback grid layout...');
+                
+                const container = document.getElementById('mainContainer');
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 100%; gap: 10px; padding: 10px;">
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); display: flex; flex-direction: column;">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold; font-family: 'Orbitron', monospace;">🐍 Python Control</div>
+                            <iframe src="python.html" style="width: 100%; height: calc(100% - 40px); border: none; flex: 1;"></iframe>
+                        </div>
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); display: flex; flex-direction: column;">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold; font-family: 'Orbitron', monospace;">🤖 3D Viewer</div>
+                            <iframe src="viewer.html" style="width: 100%; height: calc(100% - 40px); border: none; flex: 1;"></iframe>
+                        </div>
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); display: flex; flex-direction: column;">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold; font-family: 'Orbitron', monospace;">📚 Demos</div>
+                            <iframe src="demos.html" style="width: 100%; height: calc(100% - 40px); border: none; flex: 1;"></iframe>
+                        </div>
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%); display: flex; flex-direction: column;">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold; font-family: 'Orbitron', monospace;">❓ Help</div>
+                            <iframe src="help.html" style="width: 100%; height: calc(100% - 40px); border: none; flex: 1;"></iframe>
+                        </div>
+                    </div>
+                `;
+                
+                this.updateLoadingText('Fallback layout ready!');
+                setTimeout(() => {
+                    this.hideLoadingScreen();
+                }, 1000);
             }
 
             setupMessageHandlers() {

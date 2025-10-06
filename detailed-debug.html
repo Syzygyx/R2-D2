@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Debug - 404 Detection</title>
+    <style>
+        body { font-family: monospace; background: #000; color: #0f0; padding: 20px; }
+        .console { background: #111; padding: 10px; margin: 10px 0; border: 1px solid #0f0; max-height: 400px; overflow-y: auto; }
+        .error { color: #f00; }
+        .warn { color: #ff0; }
+        .info { color: #0ff; }
+        .success { color: #0f0; }
+        .url { color: #ff0; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Detailed 404 Debug</h1>
+    <div id="console" class="console"></div>
+    
+    <script>
+        const consoleDiv = document.getElementById('console');
+        let errorCount = 0;
+        let successCount = 0;
+        
+        function log(type, message, url = '') {
+            const div = document.createElement('div');
+            div.className = type;
+            const timestamp = new Date().toLocaleTimeString();
+            const urlText = url ? `<br><span class="url">URL: ${url}</span>` : '';
+            div.innerHTML = `[${timestamp}] ${type.toUpperCase()}: ${message}${urlText}`;
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            
+            if (type === 'error') errorCount++;
+            if (type === 'success') successCount++;
+            
+            // Update counters
+            document.title = `Debug - Errors: ${errorCount}, Success: ${successCount}`;
+        }
+        
+        // Override console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            log('info', args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            log('error', args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            log('warn', args.join(' '));
+        };
+        
+        // Track all network requests
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            log('info', `Fetching: ${url}`);
+            return originalFetch(url, options)
+                .then(response => {
+                    if (response.ok) {
+                        log('success', `✅ ${response.status} - ${url}`);
+                    } else {
+                        log('error', `❌ ${response.status} - ${url}`);
+                    }
+                    return response;
+                })
+                .catch(error => {
+                    log('error', `❌ Fetch failed - ${url} - ${error.message}`);
+                    throw error;
+                });
+        };
+        
+        // Track script loading
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            const element = originalCreateElement.call(document, tagName);
+            if (tagName.toLowerCase() === 'script') {
+                const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src').set;
+                Object.defineProperty(element, 'src', {
+                    set: function(value) {
+                        log('info', `Loading script: ${value}`);
+                        originalSrcSetter.call(this, value);
+                    },
+                    get: function() {
+                        return this.getAttribute('src');
+                    }
+                });
+            }
+            return element;
+        };
+        
+        // Track iframe loading
+        const originalCreateElementNS = document.createElementNS;
+        document.createElementNS = function(namespaceURI, qualifiedName) {
+            const element = originalCreateElementNS.call(document, namespaceURI, qualifiedName);
+            if (qualifiedName.toLowerCase() === 'iframe') {
+                const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src').set;
+                Object.defineProperty(element, 'src', {
+                    set: function(value) {
+                        log('info', `Loading iframe: ${value}`);
+                        originalSrcSetter.call(this, value);
+                    },
+                    get: function() {
+                        return this.getAttribute('src');
+                    }
+                });
+            }
+            return element;
+        };
+        
+        // Test 1: Direct Pyodide loading
+        log('info', '🧪 Test 1: Direct Pyodide loading...');
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
+        script.onload = function() {
+            log('success', 'Pyodide script loaded successfully');
+            
+            if (typeof loadPyodide !== 'undefined') {
+                log('success', 'loadPyodide function available');
+                
+                loadPyodide({
+                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
+                }).then(pyodide => {
+                    log('success', '🎉 Pyodide loaded successfully!');
+                }).catch(error => {
+                    log('error', `Pyodide load error: ${error.message}`);
+                });
+            } else {
+                log('error', 'loadPyodide function not available');
+            }
+        };
+        
+        script.onerror = function(e) {
+            log('error', `Pyodide script load error: ${e.message}`);
+        };
+        
+        document.head.appendChild(script);
+        
+        // Test 2: Simulator iframe
+        setTimeout(() => {
+            log('info', '🧪 Test 2: Simulator iframe loading...');
+            
+            const iframe = document.createElement('iframe');
+            iframe.src = 'https://syzygyx.github.io/R2-D2/simulator-goldenlayout.html';
+            iframe.style.width = '100%';
+            iframe.style.height = '400px';
+            iframe.style.border = '1px solid #0f0';
+            iframe.style.marginTop = '20px';
+            
+            iframe.onload = function() {
+                log('success', 'Simulator iframe loaded');
+                
+                // Try to access Python iframe
+                setTimeout(() => {
+                    try {
+                        const pythonIframe = iframe.contentDocument.querySelector('iframe[src*="python.html"]');
+                        if (pythonIframe) {
+                            log('success', 'Python iframe found in simulator');
+                        } else {
+                            log('warn', 'Python iframe not found in simulator');
+                        }
+                    } catch (e) {
+                        log('warn', `Cross-origin access blocked: ${e.message}`);
+                    }
+                }, 2000);
+            };
+            
+            iframe.onerror = function(e) {
+                log('error', `Simulator iframe error: ${e.message}`);
+            };
+            
+            document.body.appendChild(iframe);
+        }, 1000);
+        
+        // Test 3: Check specific URLs
+        setTimeout(() => {
+            log('info', '🧪 Test 3: Checking specific URLs...');
+            
+            const urlsToCheck = [
+                'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js',
+                'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide-lock.json',
+                'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.asm.wasm',
+                'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/python_stdlib.zip',
+                'https://syzygyx.github.io/R2-D2/simulator-goldenlayout.html',
+                'https://syzygyx.github.io/R2-D2/python.html',
+                'https://syzygyx.github.io/R2-D2/viewer.html',
+                'https://syzygyx.github.io/R2-D2/demos.html',
+                'https://syzygyx.github.io/R2-D2/help.html'
+            ];
+            
+            urlsToCheck.forEach((url, index) => {
+                setTimeout(() => {
+                    fetch(url, { method: 'HEAD' })
+                        .then(response => {
+                            if (response.ok) {
+                                log('success', `✅ ${response.status} - ${url}`);
+                            } else {
+                                log('error', `❌ ${response.status} - ${url}`);
+                            }
+                        })
+                        .catch(error => {
+                            log('error', `❌ Network error - ${url} - ${error.message}`);
+                        });
+                }, index * 500);
+            });
+        }, 2000);
+        
+        // Summary after 10 seconds
+        setTimeout(() => {
+            log('info', `📊 Summary: ${successCount} successful, ${errorCount} errors`);
+            if (errorCount === 0) {
+                log('success', '🎉 All tests passed! No 404 errors detected.');
+            } else {
+                log('warn', `⚠️ ${errorCount} errors detected. Check the console above for details.`);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

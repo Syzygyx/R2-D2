@@ -1,0 +1,18 @@
+name: "Panel Scream"
+description: "Scream sequence - all panels open quickly with sound and lights"
+steps:
+  - time_ms: 200
+    servo_positions: [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]
+    description: "Close all panels"
+  
+  - time_ms: 3000
+    servo_positions: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
+    description: "Open all panels - SCREAM!"
+  
+  - time_ms: 1500
+    servo_positions: [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]
+    description: "Close all panels"
+  
+  - time_ms: 0
+    servo_positions: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    description: "Stop all servos"

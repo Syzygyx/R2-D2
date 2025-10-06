@@ -1,0 +1,39 @@
+# SITH - Shadow Integration & Translation Hub Requirements
+
+# Core dependencies
+numpy>=1.21.0
+pyyaml>=6.0
+pyserial>=3.5
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Hardware control
+adafruit-circuitpython-pca9685>=3.4.0
+adafruit-circuitpython-neopixel>=6.3.0
+adafruit-circuitpython-motor>=3.4.0
+RPi.GPIO>=0.7.1
+
+# AI and vision
+tensorflow-lite>=2.10.0
+opencv-python>=4.6.0
+pillow>=9.0.0
+
+# ROS 2 (optional)
+rclpy>=3.3.0
+sensor-msgs>=4.2.0
+geometry-msgs>=4.2.0
+std-msgs>=4.2.0
+
+# Audio
+pyaudio>=0.2.11
+pygame>=2.1.0
+
+# Development
+black>=22.0.0
+flake8>=5.0.0
+mypy>=0.991
+pre-commit>=2.20.0
+
+# Documentation
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.0.0

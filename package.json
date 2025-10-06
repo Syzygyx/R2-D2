@@ -1,0 +1,42 @@
+{
+  "name": "sith-r2d2-simulator",
+  "version": "1.0.0",
+  "description": "SITH R2-D2 Control System with Python and 3D Visualization",
+  "main": "index.html",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "install:browsers": "playwright install",
+    "dev": "python -m http.server 8000",
+    "start": "python -m http.server 8000"
+  },
+  "keywords": [
+    "r2d2",
+    "star-wars",
+    "python",
+    "threejs",
+    "goldenlayout",
+    "simulator",
+    "robotics",
+    "shadow-protocol"
+  ],
+  "author": "Syzygyx",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Syzygyx/R2-D2.git"
+  },
+  "homepage": "https://syzygyx.github.io/R2-D2/",
+  "bugs": {
+    "url": "https://github.com/Syzygyx/R2-D2/issues"
+  }
+}

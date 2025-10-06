@@ -6,6 +6,9 @@
     <title>SITH - Integrated R2-D2 Simulator</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
     
+    <!-- jQuery (required for GoldenLayout) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <!-- GoldenLayout CSS -->
     <link rel="stylesheet" href="https://unpkg.com/golden-layout@1.5.9/dist/css/goldenlayout-base.css">
     <link rel="stylesheet" href="https://unpkg.com/golden-layout@1.5.9/dist/css/themes/goldenlayout-dark-theme.css">
@@ -214,6 +217,54 @@
 
     <!-- GoldenLayout JavaScript -->
     <script src="https://unpkg.com/golden-layout@1.5.9/dist/goldenlayout.min.js"></script>
+    
+    <!-- Fallback CSS if CDN fails -->
+    <style>
+        /* GoldenLayout fallback styles */
+        .lm_goldenlayout {
+            position: relative;
+            height: 100%;
+        }
+        
+        .lm_content {
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .lm_item_container {
+            position: absolute;
+            overflow: hidden;
+        }
+        
+        .lm_header {
+            height: 20px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .lm_tab {
+            display: inline-block;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .lm_splitter {
+            position: absolute;
+            z-index: 4;
+        }
+        
+        .lm_splitter.lm_horizontal {
+            height: 2px;
+            width: 100%;
+            cursor: row-resize;
+        }
+        
+        .lm_splitter.lm_vertical {
+            width: 2px;
+            height: 100%;
+            cursor: col-resize;
+        }
+    </style>
 
     <script>
         // SITH Simulator with GoldenLayout
@@ -222,7 +273,10 @@
                 this.layout = null;
                 this.loadingScreen = document.getElementById('loadingScreen');
                 this.loadingText = document.getElementById('loadingText');
-                this.initializeLayout();
+                this.initializeLayout().catch(error => {
+                    console.error('Failed to initialize layout:', error);
+                    this.updateLoadingText(`Initialization failed: ${error.message}`);
+                });
                 this.setupMessageHandlers();
             }
 
@@ -238,11 +292,30 @@
                 }
             }
 
-            initializeLayout() {
+            async initializeLayout() {
                 try {
+                    this.updateLoadingText('Loading dependencies...');
+                    
+                    // Wait for jQuery to load
+                    let attempts = 0;
+                    while (typeof $ === 'undefined' && attempts < 50) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+                    
+                    if (typeof $ === 'undefined') {
+                        throw new Error('jQuery failed to load');
+                    }
+                    
                     this.updateLoadingText('Loading GoldenLayout...');
                     
-                    // Check if GoldenLayout is loaded
+                    // Wait for GoldenLayout to load
+                    attempts = 0;
+                    while (typeof GoldenLayout === 'undefined' && attempts < 50) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+                    
                     if (typeof GoldenLayout === 'undefined') {
                         throw new Error('GoldenLayout failed to load');
                     }
@@ -381,11 +454,42 @@
                     console.error('Error initializing simulator:', error);
                     this.updateLoadingText(`Error: ${error.message}`);
                     
-                    // Show error message
+                    // Try fallback layout
                     setTimeout(() => {
-                        this.updateLoadingText('Failed to load simulator. Please refresh the page.');
-                    }, 2000);
+                        this.createFallbackLayout();
+                    }, 1000);
                 }
+            }
+
+            createFallbackLayout() {
+                this.updateLoadingText('Creating fallback layout...');
+                
+                const container = document.getElementById('mainContainer');
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 100%; gap: 10px;">
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">🐍 Python Control</div>
+                            <iframe src="python.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        </div>
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">🤖 3D Viewer</div>
+                            <iframe src="viewer.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        </div>
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">📚 Demos</div>
+                            <iframe src="demos.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        </div>
+                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
+                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">❓ Help</div>
+                            <iframe src="help.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        </div>
+                    </div>
+                `;
+                
+                this.updateLoadingText('Fallback layout created');
+                setTimeout(() => {
+                    this.hideLoadingScreen();
+                }, 1000);
             }
 
 

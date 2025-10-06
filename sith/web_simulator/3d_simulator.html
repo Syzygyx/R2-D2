@@ -489,6 +489,32 @@
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Fallback for OrbitControls if CDN fails -->
+    <script>
+        if (typeof THREE !== 'undefined' && !THREE.OrbitControls) {
+            // Simple fallback OrbitControls implementation
+            THREE.OrbitControls = function(camera, domElement) {
+                this.camera = camera;
+                this.domElement = domElement;
+                this.enableDamping = true;
+                this.dampingFactor = 0.05;
+                this.maxPolarAngle = Math.PI / 2;
+                
+                this.update = function() {
+                    // Simple rotation
+                    this.camera.position.x = Math.cos(Date.now() * 0.0005) * 10;
+                    this.camera.position.z = Math.sin(Date.now() * 0.0005) * 10;
+                    this.camera.lookAt(0, 0, 0);
+                };
+                
+                this.reset = function() {
+                    this.camera.position.set(0, 5, 10);
+                    this.camera.lookAt(0, 0, 0);
+                };
+            };
+        }
+    </script>
 
     <script>
         // SITH 3D R2-D2 Simulator
@@ -510,7 +536,20 @@
                 
                 this.initializeEventListeners();
                 this.initialize3D();
-                this.createR2D2Model();
+                
+                // Create R2-D2 model after a short delay to ensure 3D is ready
+                setTimeout(() => {
+                    this.createR2D2Model();
+                }, 100);
+                
+                // Fallback timeout to hide loading screen
+                setTimeout(() => {
+                    const loading = document.getElementById('loading');
+                    if (loading.style.display !== 'none') {
+                        console.warn('Loading timeout - forcing display');
+                        loading.style.display = 'none';
+                    }
+                }, 5000);
             }
             
             initializeEventListeners() {
@@ -553,42 +592,56 @@
             }
             
             initialize3D() {
-                // Create scene
-                this.scene = new THREE.Scene();
-                this.scene.background = new THREE.Color(0x000000);
-                
-                // Add starfield
-                this.createStarfield();
-                
-                // Create camera
-                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                this.camera.position.set(0, 5, 10);
-                
-                // Create renderer
-                const container = document.getElementById('threejs-container');
-                this.renderer = new THREE.WebGLRenderer({ antialias: true });
-                this.renderer.setSize(container.clientWidth, container.clientHeight);
-                this.renderer.shadowMap.enabled = true;
-                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-                container.appendChild(this.renderer.domElement);
-                
-                // Add controls
-                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-                this.controls.enableDamping = true;
-                this.controls.dampingFactor = 0.05;
-                this.controls.maxPolarAngle = Math.PI / 2;
-                
-                // Add lighting
-                this.setupLighting();
-                
-                // Add ground
-                this.addGround();
-                
-                // Handle window resize
-                window.addEventListener('resize', () => this.onWindowResize());
-                
-                // Start animation loop
-                this.animate();
+                try {
+                    console.log('Initializing 3D scene...');
+                    
+                    // Check if Three.js is loaded
+                    if (typeof THREE === 'undefined') {
+                        throw new Error('Three.js not loaded');
+                    }
+                    
+                    // Create scene
+                    this.scene = new THREE.Scene();
+                    this.scene.background = new THREE.Color(0x000000);
+                    
+                    // Add starfield
+                    this.createStarfield();
+                    
+                    // Create camera
+                    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                    this.camera.position.set(0, 5, 10);
+                    
+                    // Create renderer
+                    const container = document.getElementById('threejs-container');
+                    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                    this.renderer.setSize(container.clientWidth, container.clientHeight);
+                    this.renderer.shadowMap.enabled = true;
+                    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                    container.appendChild(this.renderer.domElement);
+                    
+                    // Add controls
+                    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                    this.controls.enableDamping = true;
+                    this.controls.dampingFactor = 0.05;
+                    this.controls.maxPolarAngle = Math.PI / 2;
+                    
+                    // Add lighting
+                    this.setupLighting();
+                    
+                    // Add ground
+                    this.addGround();
+                    
+                    // Handle window resize
+                    window.addEventListener('resize', () => this.onWindowResize());
+                    
+                    // Start animation loop
+                    this.animate();
+                    
+                    console.log('3D scene initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing 3D scene:', error);
+                    this.showError('Failed to initialize 3D scene: ' + error.message);
+                }
             }
             
             setupLighting() {
@@ -651,9 +704,29 @@
                 this.scene.add(ground);
             }
             
+            showError(message) {
+                const loading = document.getElementById('loading');
+                loading.innerHTML = `
+                    <h2 style="color: #ff0000;">❌ Error</h2>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" style="
+                        padding: 10px 20px;
+                        background: #00d4ff;
+                        color: #000;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-top: 10px;
+                    ">Retry</button>
+                `;
+            }
+            
             createR2D2Model() {
-                // Create R2-D2 group
-                this.r2d2 = new THREE.Group();
+                try {
+                    console.log('Creating R2-D2 model...');
+                    
+                    // Create R2-D2 group
+                    this.r2d2 = new THREE.Group();
                 
                 // Main body (cylinder)
                 const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 3, 16);
@@ -690,8 +763,14 @@
                 // Add to scene
                 this.scene.add(this.r2d2);
                 
-                // Hide loading screen
-                document.getElementById('loading').style.display = 'none';
+                    // Hide loading screen
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    console.log('R2-D2 model created successfully');
+                } catch (error) {
+                    console.error('Error creating R2-D2 model:', error);
+                    this.showError('Failed to create R2-D2 model: ' + error.message);
+                }
             }
             
             createDomePanels() {

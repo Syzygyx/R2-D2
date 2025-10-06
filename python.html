@@ -380,14 +380,8 @@ Click 'Run' to execute your code!</div>
                     
                     this.log('Python loaded successfully!', 'success');
                     
-                    // Install required packages
-                    await this.pyodide.loadPackage(['micropip']);
-                    
-                    // Install requests using micropip (synchronous approach)
-                    this.pyodide.runPython(`
-                        import micropip
-                        micropip.install(['requests'])
-                    `);
+                    // Install required packages using loadPackage (more reliable)
+                    await this.pyodide.loadPackage(['requests']);
                     
                     // Create SITH API module
                     this.createSITHAPIModule();

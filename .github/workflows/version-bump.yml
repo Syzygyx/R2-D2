@@ -1,0 +1,116 @@
+name: Auto Version Bump
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.gitignore'
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Setup Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Extract current version
+      id: version
+      run: |
+        # Extract version from simulator.html
+        VERSION=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' simulator.html | head -1)
+        echo "current_version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $VERSION"
+
+    - name: Bump version
+      id: bump
+      run: |
+        CURRENT_VERSION=${{ steps.version.outputs.current_version }}
+        echo "Current version: $CURRENT_VERSION"
+        
+        # Extract major, minor, patch
+        IFS='.' read -r MAJOR MINOR PATCH <<< "${CURRENT_VERSION#v}"
+        echo "Major: $MAJOR, Minor: $MINOR, Patch: $PATCH"
+        
+        # Increment patch version
+        NEW_PATCH=$((PATCH + 1))
+        NEW_VERSION="v${MAJOR}.${MINOR}.${NEW_PATCH}"
+        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "New version: $NEW_VERSION"
+
+    - name: Update version in files
+      run: |
+        NEW_VERSION=${{ steps.bump.outputs.new_version }}
+        echo "Updating to version: $NEW_VERSION"
+        
+        # Update simulator.html
+        sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/$NEW_VERSION/g" simulator.html
+        
+        # Update simulator-goldenlayout.html
+        sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/$NEW_VERSION/g" simulator-goldenlayout.html
+        
+        # Update viewer-fbx.html if it has version
+        if grep -q "version-badge" viewer-fbx.html; then
+          sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/$NEW_VERSION/g" viewer-fbx.html
+        fi
+        
+        # Update python.html if it has version
+        if grep -q "version-badge" python.html; then
+          sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/$NEW_VERSION/g" python.html
+        fi
+        
+        # Update demos.html if it has version
+        if grep -q "version-badge" demos.html; then
+          sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/$NEW_VERSION/g" demos.html
+        fi
+        
+        # Update help.html if it has version
+        if grep -q "version-badge" help.html; then
+          sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/$NEW_VERSION/g" help.html
+        fi
+
+    - name: Check for changes
+      id: changes
+      run: |
+        if git diff --quiet; then
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "No changes to commit"
+        else
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "Changes detected:"
+          git diff --name-only
+        fi
+
+    - name: Commit and push changes
+      if: steps.changes.outputs.has_changes == 'true'
+      run: |
+        NEW_VERSION=${{ steps.bump.outputs.new_version }}
+        git add -A
+        git commit -m "Auto-bump version to $NEW_VERSION [skip ci]"
+        git push
+
+    - name: Create version summary
+      if: steps.changes.outputs.has_changes == 'true'
+      run: |
+        NEW_VERSION=${{ steps.bump.outputs.new_version }}
+        echo "## 🚀 Version Bumped to $NEW_VERSION" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Files Updated:" >> $GITHUB_STEP_SUMMARY
+        git diff --name-only HEAD~1 | while read file; do
+          echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
+        done
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Changes:" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`diff" >> $GITHUB_STEP_SUMMARY
+        git diff HEAD~1 | head -20 >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

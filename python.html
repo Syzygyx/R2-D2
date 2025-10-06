@@ -382,7 +382,9 @@ Click 'Run' to execute your code!</div>
                     
                     // Install required packages
                     await this.pyodide.loadPackage(['micropip']);
-                    await this.pyodide.runPython(`
+                    
+                    // Install requests using micropip
+                    await this.pyodide.runPythonAsync(`
                         import micropip
                         await micropip.install(['requests'])
                     `);
@@ -422,12 +424,9 @@ class SITHAPI:
             result = response.json()
             
             # Notify parent window of panel changes
-            if (command.startsWith(':OP') || command.startsWith(':CL')) {
-                parent.postMessage({
-                    type: 'panel_update',
-                    command: command
-                }, '*');
-            }
+            if command.startswith(':OP') or command.startswith(':CL'):
+                # This will be handled by the JavaScript wrapper
+                pass
             
             return result
         except Exception as e:

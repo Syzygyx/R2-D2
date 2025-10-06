@@ -381,10 +381,123 @@
                         throw new Error('GoldenLayout failed to load');
                     }
 
-                    this.updateLoadingText('Creating enhanced grid layout...');
+                    this.updateLoadingText('Creating GoldenLayout...');
                     
-                    // Use a simpler approach - create a resizable grid with GoldenLayout styling
-                    this.createEnhancedGridLayout();
+                    // Create proper GoldenLayout configuration
+                    const config = {
+                        content: [{
+                            type: 'row',
+                            content: [
+                                {
+                                    type: 'column',
+                                    width: 50,
+                                    content: [
+                                        {
+                                            type: 'component',
+                                            componentName: 'python',
+                                            title: '🐍 Python Control',
+                                            componentState: {}
+                                        },
+                                        {
+                                            type: 'component',
+                                            componentName: 'demos',
+                                            title: '📚 Demos',
+                                            componentState: {}
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: 'column',
+                                    width: 50,
+                                    content: [
+                                        {
+                                            type: 'component',
+                                            componentName: 'viewer',
+                                            title: '🤖 3D Viewer',
+                                            componentState: {}
+                                        },
+                                        {
+                                            type: 'component',
+                                            componentName: 'help',
+                                            title: '❓ Help',
+                                            componentState: {}
+                                        }
+                                    ]
+                                }
+                            ]
+                        }],
+                        dimensions: {
+                            borderWidth: 2,
+                            minItemHeight: 200,
+                            minItemWidth: 200
+                        },
+                        settings: {
+                            showPopoutIcon: false,
+                            showMaximiseIcon: true,
+                            showCloseIcon: false,
+                            showPopoutIcon: false,
+                            responsiveMode: 'always'
+                        }
+                    };
+
+                    // Register components
+                    GoldenLayout.registerComponent('python', (container, componentState) => {
+                        this.updateLoadingText('Loading Python component...');
+                        const iframe = document.createElement('iframe');
+                        iframe.src = 'python.html';
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                        iframe.style.border = 'none';
+                        iframe.onload = () => {
+                            this.updateLoadingText('Python component loaded');
+                        };
+                        container.getElement().append(iframe);
+                    });
+
+                    GoldenLayout.registerComponent('viewer', (container, componentState) => {
+                        this.updateLoadingText('Loading 3D Viewer component...');
+                        const iframe = document.createElement('iframe');
+                        iframe.src = 'viewer-fbx.html';
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                        iframe.style.border = 'none';
+                        iframe.onload = () => {
+                            this.updateLoadingText('3D Viewer component loaded');
+                        };
+                        container.getElement().append(iframe);
+                    });
+
+                    GoldenLayout.registerComponent('demos', (container, componentState) => {
+                        this.updateLoadingText('Loading Demos component...');
+                        const iframe = document.createElement('iframe');
+                        iframe.src = 'demos.html';
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                        iframe.style.border = 'none';
+                        iframe.onload = () => {
+                            this.updateLoadingText('Demos component loaded');
+                        };
+                        container.getElement().append(iframe);
+                    });
+
+                    GoldenLayout.registerComponent('help', (container, componentState) => {
+                        this.updateLoadingText('Loading Help component...');
+                        const iframe = document.createElement('iframe');
+                        iframe.src = 'help.html';
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                        iframe.style.border = 'none';
+                        iframe.onload = () => {
+                            this.updateLoadingText('Help component loaded');
+                        };
+                        container.getElement().append(iframe);
+                    });
+
+                    this.updateLoadingText('Initializing layout...');
+
+                    // Create GoldenLayout instance
+                    this.layout = new GoldenLayout(config, '#mainContainer');
+                    this.layout.init();
 
                     this.updateLoadingText('Simulator ready!');
                     
@@ -394,8 +507,8 @@
                     }, 1000);
 
                 } catch (error) {
-                    console.error('Error initializing layout:', error);
-                    this.updateLoadingText('Layout failed, using fallback...');
+                    console.error('Error initializing GoldenLayout:', error);
+                    this.updateLoadingText('GoldenLayout failed, using fallback...');
                     
                     // Fallback to simple grid layout
                     setTimeout(() => {

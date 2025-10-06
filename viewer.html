@@ -207,6 +207,7 @@
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 
     <script>
         // 3D Viewer Component
@@ -308,8 +309,7 @@
                 const illuminationTexture = textureLoader.load('models/r2d2/R2D2_Illumination.png');
                 const reflectionTexture = textureLoader.load('models/r2d2/R2D2_Reflection_1.png');
                 
-                // Body
-                const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 2, 16);
+                // Create materials
                 const bodyMaterial = new THREE.MeshPhongMaterial({ 
                     map: diffuseTexture,
                     specularMap: specularTexture,
@@ -318,10 +318,53 @@
                     shininess: 100,
                     transparent: true
                 });
+                
+                const domeMaterial = new THREE.MeshPhongMaterial({ 
+                    map: diffuseTexture,
+                    specularMap: specularTexture,
+                    emissiveMap: illuminationTexture,
+                    envMap: reflectionTexture,
+                    shininess: 100,
+                    transparent: true
+                });
+                
+                // Main Body - More detailed cylinder with beveled edges
+                const bodyGeometry = new THREE.CylinderGeometry(1.6, 1.6, 2.2, 32);
                 const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-                body.position.y = 1;
+                body.position.y = 1.1;
                 body.castShadow = true;
                 group.add(body);
+                
+                // Body details - horizontal rings
+                for (let i = 0; i < 3; i++) {
+                    const ringGeometry = new THREE.TorusGeometry(1.7, 0.05, 8, 32);
+                    const ringMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x333333,
+                        emissive: 0x110000,
+                        shininess: 50
+                    });
+                    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                    ring.position.y = 0.5 + i * 0.6;
+                    ring.rotation.x = Math.PI / 2;
+                    group.add(ring);
+                }
+                
+                // Body vertical details
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const x = Math.cos(angle) * 1.7;
+                    const z = Math.sin(angle) * 1.7;
+                    
+                    const detailGeometry = new THREE.BoxGeometry(0.1, 1.8, 0.05);
+                    const detailMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x444444,
+                        emissive: 0x110000
+                    });
+                    const detail = new THREE.Mesh(detailGeometry, detailMaterial);
+                    detail.position.set(x, 1.1, z);
+                    detail.lookAt(0, 1.1, 0);
+                    group.add(detail);
+                }
                 
                 // Add body details
                 for (let i = 0; i < 8; i++) {
@@ -337,20 +380,40 @@
                     group.add(line);
                 }
                 
-                // Dome
-                const domeGeometry = new THREE.SphereGeometry(1.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-                const domeMaterial = new THREE.MeshPhongMaterial({ 
-                    map: diffuseTexture,
-                    specularMap: specularTexture,
-                    emissiveMap: illuminationTexture,
-                    envMap: reflectionTexture,
-                    shininess: 100,
-                    transparent: true
-                });
+                // Dome - More detailed hemisphere
+                const domeGeometry = new THREE.SphereGeometry(1.3, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
                 const dome = new THREE.Mesh(domeGeometry, domeMaterial);
-                dome.position.y = 2.2;
+                dome.position.y = 2.4;
                 dome.castShadow = true;
                 group.add(dome);
+                
+                // Dome top detail
+                const domeTopGeometry = new THREE.SphereGeometry(0.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+                const domeTopMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0x666666,
+                    emissive: 0x220000,
+                    shininess: 100
+                });
+                const domeTop = new THREE.Mesh(domeTopGeometry, domeTopMaterial);
+                domeTop.position.y = 3.1;
+                group.add(domeTop);
+                
+                // Dome side details
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i / 6) * Math.PI * 2;
+                    const x = Math.cos(angle) * 1.2;
+                    const z = Math.sin(angle) * 1.2;
+                    
+                    const sideDetailGeometry = new THREE.BoxGeometry(0.15, 0.3, 0.05);
+                    const sideDetailMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x444444,
+                        emissive: 0x110000
+                    });
+                    const sideDetail = new THREE.Mesh(sideDetailGeometry, sideDetailMaterial);
+                    sideDetail.position.set(x, 2.4, z);
+                    sideDetail.lookAt(0, 2.4, 0);
+                    group.add(sideDetail);
+                }
                 
                 // Create dome panels
                 this.createDomePanels(group);

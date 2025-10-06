@@ -588,6 +588,65 @@ sith = SITHAPI()
                 }
             }
             
+            createEmergencyFallback() {
+                // Emergency fallback - inject sith module directly into user code
+                const emergencyCode = `
+# Emergency SITH API fallback
+class SITHAPI:
+    def __init__(self, base_url='http://localhost:5000'):
+        self.base_url = base_url
+        print("Emergency SITH API activated")
+    
+    def send_command(self, command):
+        print(f"Emergency simulated command: {command}")
+        return {'success': True, 'message': f'Emergency: {command}'}
+    
+    def open_panel(self, panel_num):
+        if 1 <= panel_num <= 16:
+            print(f"Emergency: Opening panel {panel_num}")
+            return {'success': True, 'message': f'Emergency: Opened panel {panel_num}'}
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def close_panel(self, panel_num):
+        if 1 <= panel_num <= 16:
+            print(f"Emergency: Closing panel {panel_num}")
+            return {'success': True, 'message': f'Emergency: Closed panel {panel_num}'}
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def open_all_panels(self):
+        print("Emergency: Opening all panels")
+        return {'success': True, 'message': 'Emergency: Opened all panels'}
+    
+    def close_all_panels(self):
+        print("Emergency: Closing all panels")
+        return {'success': True, 'message': 'Emergency: Closed all panels'}
+    
+    def run_sequence(self, sequence_name):
+        print(f"Emergency: Running sequence {sequence_name}")
+        return {'success': True, 'message': f'Emergency: Ran sequence {sequence_name}'}
+    
+    def get_status(self):
+        return {'success': True, 'status': 'emergency_mode', 'panels': 'all_closed'}
+    
+    def get_panels(self):
+        return {'success': True, 'panels': [False] * 16}
+    
+    def reset(self):
+        print("Emergency: Resetting R2-D2")
+        return {'success': True, 'message': 'Emergency: Reset complete'}
+
+# Create global instance
+sith = SITHAPI()
+`;
+                
+                try {
+                    this.pyodide.runPython(emergencyCode);
+                    this.log('Emergency SITH API created', 'warning');
+                } catch (error) {
+                    this.log(`Emergency fallback failed: ${error.message}`, 'error');
+                }
+            }
+            
             async runScript() {
                 if (this.isRunning) {
                     this.log('Script is already running!', 'error');
@@ -600,12 +659,22 @@ sith = SITHAPI()
                     return;
                 }
                 
-                // Check if SITH API exists, create fallback if needed
+                // Ensure SITH API exists before running user code
                 try {
                     this.pyodide.runPython('sith');
+                    this.log('SITH API verified before script execution', 'info');
                 } catch (error) {
                     this.log('SITH API not found, creating fallback...', 'warning');
                     this.createFallbackAPI();
+                    
+                    // Verify it was created
+                    try {
+                        this.pyodide.runPython('sith');
+                        this.log('Fallback SITH API created successfully', 'success');
+                    } catch (verifyError) {
+                        this.log('Failed to create SITH API, using emergency fallback', 'error');
+                        this.createEmergencyFallback();
+                    }
                 }
                 
                 this.isRunning = true;
@@ -617,7 +686,7 @@ sith = SITHAPI()
                 this.log('=' * 50, 'info');
                 
                 try {
-                    // Capture print output
+                    // Capture print output and ensure sith module is available
                     this.pyodide.runPython(`
 import sys
 from io import StringIO
@@ -636,6 +705,57 @@ class OutputCapture:
 capture = OutputCapture()
 sys.stdout = capture
 sys.stderr = capture
+
+# Ensure sith module is available
+try:
+    sith
+except NameError:
+    # sith not available, create emergency fallback
+    class SITHAPI:
+        def __init__(self, base_url='http://localhost:5000'):
+            self.base_url = base_url
+            print("Emergency SITH API activated in script context")
+        
+        def send_command(self, command):
+            print(f"Emergency simulated command: {command}")
+            return {'success': True, 'message': f'Emergency: {command}'}
+        
+        def open_panel(self, panel_num):
+            if 1 <= panel_num <= 16:
+                print(f"Emergency: Opening panel {panel_num}")
+                return {'success': True, 'message': f'Emergency: Opened panel {panel_num}'}
+            return {'success': False, 'error': 'Panel number must be 1-16'}
+        
+        def close_panel(self, panel_num):
+            if 1 <= panel_num <= 16:
+                print(f"Emergency: Closing panel {panel_num}")
+                return {'success': True, 'message': f'Emergency: Closed panel {panel_num}'}
+            return {'success': False, 'error': 'Panel number must be 1-16'}
+        
+        def open_all_panels(self):
+            print("Emergency: Opening all panels")
+            return {'success': True, 'message': 'Emergency: Opened all panels'}
+        
+        def close_all_panels(self):
+            print("Emergency: Closing all panels")
+            return {'success': True, 'message': 'Emergency: Closed all panels'}
+        
+        def run_sequence(self, sequence_name):
+            print(f"Emergency: Running sequence {sequence_name}")
+            return {'success': True, 'message': f'Emergency: Ran sequence {sequence_name}'}
+        
+        def get_status(self):
+            return {'success': True, 'status': 'emergency_mode', 'panels': 'all_closed'}
+        
+        def get_panels(self):
+            return {'success': True, 'panels': [False] * 16}
+        
+        def reset(self):
+            print("Emergency: Resetting R2-D2")
+            return {'success': True, 'message': 'Emergency: Reset complete'}
+    
+    sith = SITHAPI()
+    print("Emergency SITH API created in script context")
 `);
                     
                     // Execute user code

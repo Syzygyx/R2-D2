@@ -1,0 +1,12 @@
+[submodule "MarcDuinoClient"]
+	path = MarcDuinoClient
+	url = https://github.com/nhutchison/MarcDuinoClient.git
+[submodule "MarcDuinoMain"]
+	path = MarcDuinoMain
+	url = https://github.com/nhutchison/MarcDuinoMain.git
+[submodule "R2D2"]
+	path = R2D2
+	url = https://github.com/Flex101/R2D2.git
+[submodule "R2SensorSystem"]
+	path = R2SensorSystem
+	url = https://github.com/jlvandusen/R2SensorSystem.git

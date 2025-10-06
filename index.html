@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITH - R2-D2 Control System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            font-size: 1.4em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .app-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .app-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #FFD700;
+            text-align: center;
+        }
+
+        .app-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .app-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .app-features li {
+            padding: 5px 0;
+            opacity: 0.8;
+        }
+
+        .app-features li::before {
+            content: "✨ ";
+            margin-right: 8px;
+        }
+
+        .github-link {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .github-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.8;
+        }
+
+        .tech-stack {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .tech-stack h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #FFD700;
+            font-size: 1.5em;
+        }
+
+        .tech-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .tech-item .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .tech-item .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tech-item .description {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .app-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 SITH</h1>
+            <p>Shadow Integration & Translation Hub</p>
+            <div class="subtitle">
+                A Raspberry Pi-based modernization of R2-D2 control systems, porting legacy Shadow/MarcDuino control to modern Python with optional ROS 2 simulation and on-device TensorFlow Lite vision.
+            </div>
+        </header>
+
+        <div class="apps-grid">
+            <a href="sith/web_simulator/static_simulator.html" class="app-card">
+                <div class="app-icon">🎭</div>
+                <div class="app-title">R2-D2 Simulator</div>
+                <div class="app-description">
+                    Interactive web-based R2-D2 dome simulator with visual panel control, Shadow command processing, and real-time sequence execution.
+                </div>
+                <ul class="app-features">
+                    <li>16 interactive dome panels</li>
+                    <li>Shadow command processing</li>
+                    <li>Real-time visual feedback</li>
+                    <li>Pre-built sequences (Wave, Scream)</li>
+                    <li>Command logging and status</li>
+                </ul>
+            </a>
+
+            <a href="sith/web_simulator/sequencer.html" class="app-card">
+                <div class="app-icon">🎬</div>
+                <div class="app-title">Sequence Editor</div>
+                <div class="app-description">
+                    Visual sequence editor for creating custom R2-D2 panel choreography with precise timing control and real-time preview.
+                </div>
+                <ul class="app-features">
+                    <li>Visual step editor</li>
+                    <li>Drag-and-drop reordering</li>
+                    <li>Timeline visualization</li>
+                    <li>Preset sequences</li>
+                    <li>Real-time playback</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="tech-stack">
+            <h3>🛠️ Technology Stack</h3>
+            <div class="tech-items">
+                <div class="tech-item">
+                    <div class="icon">🐍</div>
+                    <div class="name">Python</div>
+                    <div class="description">Core language</div>
+                </div>
+                <div class="tech-item">
+                    <div class="icon">🌐</div>
+                    <div class="name">Web Technologies</div>
+                    <div class="description">HTML5, CSS3, JavaScript</div>
+                </div>
+                <div class="tech-item">
+                    <div class="icon">🤖</div>
+                    <div class="name">Raspberry Pi</div>
+                    <div class="description">Hardware platform</div>
+                </div>
+                <div class="tech-item">
+                    <div class="icon">🔌</div>
+                    <div class="name">HAL</div>
+                    <div class="description">Hardware abstraction</div>
+                </div>
+                <div class="tech-item">
+                    <div class="icon">📡</div>
+                    <div class="name">Shadow Protocol</div>
+                    <div class="description">Legacy compatibility</div>
+                </div>
+                <div class="tech-item">
+                    <div class="icon">🧠</div>
+                    <div class="name">TensorFlow Lite</div>
+                    <div class="description">AI vision</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="https://github.com/Syzygyx/R2-D2" class="github-link">
+                📁 View on GitHub
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Built with ❤️ by Syzygyx, Inc.</p>
+            <p>Open source R2-D2 control system for education and development</p>
+        </div>
+    </div>
+</body>
+</html>

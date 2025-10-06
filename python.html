@@ -381,7 +381,13 @@ Click 'Run' to execute your code!</div>
                     this.log('Python loaded successfully!', 'success');
                     
                     // Install required packages using loadPackage (more reliable)
-                    await this.pyodide.loadPackage(['requests']);
+                    try {
+                        await this.pyodide.loadPackage(['requests']);
+                        this.log('Requests package loaded successfully', 'success');
+                    } catch (error) {
+                        this.log('Requests package not available, using fallback', 'warning');
+                        // Continue without requests - we'll use a mock API
+                    }
                     
                     // Create SITH API module
                     this.createSITHAPIModule();
@@ -392,7 +398,8 @@ Click 'Run' to execute your code!</div>
                         this.log('SITH API verified and ready!', 'success');
                         this.updateStatus('apiStatus', 'Connected');
                     } catch (error) {
-                        this.log('SITH API verification failed, using fallback', 'warning');
+                        this.log('SITH API verification failed, creating fallback...', 'warning');
+                        this.createFallbackAPI();
                         this.updateStatus('apiStatus', 'Simulation Mode');
                     }
                     
@@ -410,30 +417,45 @@ Click 'Run' to execute your code!</div>
             
             createSITHAPIModule() {
                 const sithApiCode = `
-import requests
 import json
 import time
+
+# Try to import requests, fallback to mock if not available
+try:
+    import requests
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
+    print("Requests not available, using simulation mode")
 
 class SITHAPI:
     def __init__(self, base_url='${this.apiUrl}'):
         self.base_url = base_url
-        self.session = requests.Session()
+        if HAS_REQUESTS:
+            self.session = requests.Session()
+        else:
+            self.session = None
     
     def send_command(self, command):
         """Send a Shadow command to R2-D2"""
-        try:
-            response = self.session.post(f'{self.base_url}/api/command', 
-                                      json={'command': command})
-            result = response.json()
-            
-            # Notify parent window of panel changes
-            if command.startswith(':OP') or command.startswith(':CL'):
-                # This will be handled by the JavaScript wrapper
-                pass
-            
-            return result
-        except Exception as e:
-            return {'success': False, 'error': str(e)}
+        if HAS_REQUESTS and self.session:
+            try:
+                response = self.session.post(f'{self.base_url}/api/command', 
+                                          json={'command': command})
+                result = response.json()
+                
+                # Notify parent window of panel changes
+                if command.startswith(':OP') or command.startswith(':CL'):
+                    # This will be handled by the JavaScript wrapper
+                    pass
+                
+                return result
+            except Exception as e:
+                return {'success': False, 'error': str(e)}
+        else:
+            # Simulation mode
+            print(f"Simulated command: {command}")
+            return {'success': True, 'message': f'Simulated: {command}'}
     
     def open_panel(self, panel_num):
         """Open a specific panel (1-16)"""

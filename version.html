@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITH Simulator - Version Info</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            color: #ff0000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .version-container {
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            border: 2px solid #ff0000;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 
+                0 0 30px rgba(255, 0, 0, 0.3),
+                inset 0 0 30px rgba(255, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .version-badge {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 2.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            text-shadow: none;
+        }
+
+        .build-info {
+            color: #ff6666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px #ff6666;
+        }
+
+        .version-details {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+        }
+
+        .detail-label {
+            color: #ff9999;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .status-offline {
+            background: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .links {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .link-btn {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #000;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .link-btn:hover {
+            background: linear-gradient(135deg, #ff3333 0%, #ff0000 100%);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #ff6666;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .version-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .version-badge {
+                font-size: 2em;
+                padding: 12px 24px;
+            }
+
+            .links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .link-btn {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="version-container">
+        <div class="version-badge" id="versionBadge">v2.1.3</div>
+        <div class="build-info" id="buildInfo">FBX Model + Advanced Layout</div>
+        
+        <div class="version-details">
+            <div class="detail-row">
+                <span class="detail-label">Version:</span>
+                <span class="detail-value" id="version">v2.1.3</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Build Type:</span>
+                <span class="detail-value" id="buildType">Advanced Layout</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Last Updated:</span>
+                <span class="detail-value" id="lastUpdated">Loading...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value">
+                    <span class="status-indicator status-online"></span>
+                    <span id="status">Online</span>
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Features:</span>
+                <span class="detail-value">FBX Model, Resizable Panels, Python Control</span>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="simulator.html" class="link-btn">🚀 Main Simulator</a>
+            <a href="simulator-goldenlayout.html" class="link-btn">🪟 GoldenLayout</a>
+            <a href="https://github.com/Syzygyx/R2-D2" class="link-btn">📁 GitHub</a>
+        </div>
+
+        <div class="footer">
+            <p>SITH Integrated R2-D2 Simulator</p>
+            <p>Python Control + 3D Visualization + Shadow Protocol</p>
+        </div>
+    </div>
+
+    <script>
+        // Update last updated time
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        
+        // Check if we can load the main simulator (status check)
+        fetch('simulator.html')
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('status').textContent = 'Online';
+                    document.querySelector('.status-indicator').className = 'status-indicator status-online';
+                } else {
+                    throw new Error('Simulator not available');
+                }
+            })
+            .catch(error => {
+                document.getElementById('status').textContent = 'Offline';
+                document.querySelector('.status-indicator').className = 'status-indicator status-offline';
+            });
+
+        // Auto-refresh version info every 30 seconds
+        setInterval(() => {
+            fetch('simulator.html')
+                .then(response => response.text())
+                .then(html => {
+                    const versionMatch = html.match(/v[0-9]+\.[0-9]+\.[0-9]+/);
+                    const buildMatch = html.match(/build-info.*?>(.*?)</);
+                    
+                    if (versionMatch) {
+                        const newVersion = versionMatch[0];
+                        if (newVersion !== document.getElementById('version').textContent) {
+                            document.getElementById('version').textContent = newVersion;
+                            document.getElementById('versionBadge').textContent = newVersion;
+                            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                        }
+                    }
+                    
+                    if (buildMatch) {
+                        const newBuild = buildMatch[1];
+                        if (newBuild !== document.getElementById('buildType').textContent) {
+                            document.getElementById('buildType').textContent = newBuild;
+                            document.getElementById('buildInfo').textContent = newBuild;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not check for updates:', error);
+                });
+        }, 30000);
+    </script>
+</body>
+</html>

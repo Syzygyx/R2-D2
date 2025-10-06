@@ -511,6 +511,10 @@ sith = SITHAPI()
                 
                 try {
                     this.pyodide.runPython(sithApiCode);
+                    
+                    // Store the sith module for later use
+                    this.sithModule = this.pyodide.globals.get('sith');
+                    
                     this.log('SITH API module created successfully', 'success');
                 } catch (error) {
                     this.log(`Error creating SITH API module: ${error.message}`, 'error');
@@ -581,6 +585,10 @@ sith = SITHAPI()
                 
                 try {
                     this.pyodide.runPython(fallbackApiCode);
+                    
+                    // Store the sith module for later use
+                    this.sithModule = this.pyodide.globals.get('sith');
+                    
                     this.log('Fallback SITH API created (simulation mode)', 'info');
                 } catch (error) {
                     this.log(`Error creating fallback API: ${error.message}`, 'error');
@@ -641,6 +649,10 @@ sith = SITHAPI()
                 
                 try {
                     this.pyodide.runPython(emergencyCode);
+                    
+                    // Store the sith module for later use
+                    this.sithModule = this.pyodide.globals.get('sith');
+                    
                     this.log('Emergency SITH API created', 'warning');
                 } catch (error) {
                     this.log(`Emergency fallback failed: ${error.message}`, 'error');
@@ -688,6 +700,11 @@ sith = SITHAPI()
                 try {
                     // Register js_output function with Pyodide
                     this.pyodide.globals.set('js_output', this.js_output);
+                    
+                    // Ensure sith module is available in global scope
+                    if (this.sithModule) {
+                        this.pyodide.globals.set('sith', this.sithModule);
+                    }
                     
                     // Capture print output and ensure sith module is available
                     this.pyodide.runPython(`

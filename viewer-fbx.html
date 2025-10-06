@@ -315,7 +315,9 @@
                 const loader = new THREE.FBXLoader();
                 
                 loader.load('models/r2d2/Anim-R2.fbx', (fbx) => {
-                    console.log('R2-D2 FBX model loaded:', fbx);
+                    console.log('R2-D2 FBX model loaded successfully!', fbx);
+                    console.log('Model children:', fbx.children.length);
+                    console.log('Model animations:', fbx.animations ? fbx.animations.length : 'No animations');
                     
                     // Scale and position the model
                     fbx.scale.setScalar(0.1); // Adjust scale as needed

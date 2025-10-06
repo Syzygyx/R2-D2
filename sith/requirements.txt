@@ -7,26 +7,26 @@ pyserial>=3.5
 pytest>=7.0.0
 pytest-cov>=4.0.0
 
-# Hardware control
-adafruit-circuitpython-pca9685>=3.4.0
-adafruit-circuitpython-neopixel>=6.3.0
-adafruit-circuitpython-motor>=3.4.0
-RPi.GPIO>=0.7.1
+# Hardware control (optional - only install if available)
+# adafruit-circuitpython-pca9685>=3.4.0
+# adafruit-circuitpython-neopixel>=6.3.0
+# adafruit-circuitpython-motor>=3.4.0
+# RPi.GPIO>=0.7.1
 
-# AI and vision
-tensorflow-lite>=2.10.0
-opencv-python>=4.6.0
-pillow>=9.0.0
+# AI and vision (optional - only install if available)
+# tensorflow-lite>=2.10.0
+# opencv-python>=4.6.0
+# pillow>=9.0.0
 
-# ROS 2 (optional)
-rclpy>=3.3.0
-sensor-msgs>=4.2.0
-geometry-msgs>=4.2.0
-std-msgs>=4.2.0
+# ROS 2 (optional - only install if available)
+# rclpy>=3.3.0
+# sensor-msgs>=4.2.0
+# geometry-msgs>=4.2.0
+# std-msgs>=4.2.0
 
-# Audio
-pyaudio>=0.2.11
-pygame>=2.1.0
+# Audio (optional - only install if available)
+# pyaudio>=0.2.11
+# pygame>=2.1.0
 
 # Development
 black>=22.0.0

@@ -202,6 +202,12 @@
                                         componentName: 'python',
                                         title: '🐍 Python Control',
                                         componentState: {}
+                                    },
+                                    {
+                                        type: 'component',
+                                        componentName: 'demos',
+                                        title: '📚 Demos',
+                                        componentState: {}
                                     }
                                 ]
                             },
@@ -213,6 +219,12 @@
                                         type: 'component',
                                         componentName: 'viewer',
                                         title: '🤖 3D Viewer',
+                                        componentState: {}
+                                    },
+                                    {
+                                        type: 'component',
+                                        componentName: 'help',
+                                        title: '❓ Help',
                                         componentState: {}
                                     }
                                 ]
@@ -275,43 +287,8 @@
 
                 // Initialize the layout
                 this.layout.init();
-
-                // Add demos and help tabs after initialization
-                setTimeout(() => {
-                    this.addDemosTab();
-                    this.addHelpTab();
-                }, 1000);
             }
 
-            addDemosTab() {
-                try {
-                    const rootItem = this.layout.root;
-                    const demosItem = this.layout.createComponent({
-                        type: 'component',
-                        componentName: 'demos',
-                        title: '📚 Demos',
-                        componentState: {}
-                    });
-                    rootItem.addChild(demosItem);
-                } catch (error) {
-                    console.log('Could not add demos tab:', error);
-                }
-            }
-
-            addHelpTab() {
-                try {
-                    const rootItem = this.layout.root;
-                    const helpItem = this.layout.createComponent({
-                        type: 'component',
-                        componentName: 'help',
-                        title: '❓ Help',
-                        componentState: {}
-                    });
-                    rootItem.addChild(helpItem);
-                } catch (error) {
-                    console.log('Could not add help tab:', error);
-                }
-            }
 
             setupMessageHandlers() {
                 // Listen for messages from iframes
@@ -369,35 +346,6 @@
                 return null;
             }
 
-            // Layout management methods
-            addTab(componentName, title) {
-                try {
-                    const rootItem = this.layout.root;
-                    const newItem = this.layout.createComponent({
-                        type: 'component',
-                        componentName: componentName,
-                        title: title,
-                        componentState: {}
-                    });
-                    rootItem.addChild(newItem);
-                } catch (error) {
-                    console.error('Could not add tab:', error);
-                }
-            }
-
-            removeTab(componentName) {
-                try {
-                    const items = this.layout.root.getItemsByType('component');
-                    for (let item of items) {
-                        if (item.config.componentName === componentName) {
-                            item.remove();
-                            break;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Could not remove tab:', error);
-                }
-            }
 
             // Responsive handling
             handleResize() {

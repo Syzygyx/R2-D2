@@ -217,6 +217,8 @@
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Required for FBXLoader -->
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 
     <script>
@@ -393,9 +395,31 @@
                     console.error('Error loading R2-D2 model:', error);
                     this.updateStatus('viewerStatus', 'Error loading model');
                     
-                    // Fallback to basic model
-                    this.createFallbackR2D2Model();
+                    // Check if it's a missing dependency error
+                    if (error.message && error.message.includes('fflate')) {
+                        console.log('FBX loader missing fflate dependency, trying alternative approach...');
+                        this.loadFBXWithAlternativeLoader();
+                    } else {
+                        // Fallback to basic model
+                        this.createFallbackR2D2Model();
+                    }
                 });
+            }
+            
+            loadFBXWithAlternativeLoader() {
+                // Try loading with a different approach or wait for fflate to load
+                console.log('Waiting for fflate to load...');
+                
+                const checkFflate = () => {
+                    if (typeof fflate !== 'undefined') {
+                        console.log('fflate loaded, retrying FBX load...');
+                        this.createR2D2Model();
+                    } else {
+                        setTimeout(checkFflate, 100);
+                    }
+                };
+                
+                setTimeout(checkFflate, 100);
             }
             
             createFallbackR2D2Model() {

@@ -95,7 +95,7 @@
         log('info', 'Testing direct Pyodide loading...');
         
         const script = document.createElement('script');
-        script.src = 'https://syzygyx.github.io/R2-D2/pyodide/pyodide.js';
+        script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
         script.onload = function() {
             log('info', 'Pyodide script loaded successfully');
             
@@ -104,7 +104,7 @@
                 log('info', 'loadPyodide function available');
                 
                 loadPyodide({
-                    indexURL: "https://syzygyx.github.io/R2-D2/pyodide/"
+                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
                 }).then(pyodide => {
                     log('info', 'Pyodide loaded successfully!');
                 }).catch(error => {

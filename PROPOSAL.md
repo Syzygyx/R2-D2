@@ -106,13 +106,18 @@ To reduce wiring and improve reliability for students, SITH uses a **stacked Pi 
 ---
 
 ## Phase III — Physical Build  
-**Budget:** $800–$1,200 (separate) • **Duration:** 3–5 weeks
+**Budget:** $2,000–$3,200 (hardware + labor) • **Duration:** 3–5 weeks
 
-- **Budget R2 path**: PVC/printed frame, scooter motors, Sabertooth 2×12, 12–16 servos on PCA9685, Pi 4 + PiJuice + LED bonnet  
-- Install, wire, calibrate; add safety (e-stop, fuses, labels)  
-- Acceptance demo: teleop, 3+ sequences, dome face-tracking with override
+- **Hardware costs**: $800–$1,200
+  - Budget R2 path: PVC/printed frame, scooter motors, Sabertooth 2×12, 12–16 servos on PCA9685, Pi 4 + PiJuice + LED bonnet
+- **Labor costs**: $1,200–$2,000
+  - Hardware assembly and integration (20–30 hours @ $40–60/hour)
+  - Wiring, calibration, and safety systems (e-stop, fuses, labels)
+  - Software integration and testing
+  - Documentation and training materials
+- **Acceptance demo**: teleop, 3+ sequences, dome face-tracking with override
 
-*(Optional Hero/Aluminum build: $2,500–$4,000+; 8–12+ weeks.)*
+*(Optional Hero/Aluminum build: $4,000–$6,000+ hardware + labor; 8–12+ weeks.)*
 
 ---
 
@@ -152,7 +157,7 @@ To reduce wiring and improve reliability for students, SITH uses a **stacked Pi 
 | Phase | Description | Cost |
 |-------|-------------|------|
 | I & II | Software + AI/sim sprint | **$5,000** |
-| III | Club hardware (Budget R2) | $800–$1,200 (separate) |
+| III | Physical build (hardware + labor) | **$2,000–$3,200** |
 | IV | Curriculum authoring (optional) | $1,000–$1,500 |
 
 **Licensing:** Code under MIT / Apache 2.0; Curriculum under CC-BY. Public GitHub repo ensures longevity.

@@ -226,6 +226,7 @@
 
 ## Phase V: Physical Build (Weeks 5-7)
 **Goal**: Rolling chassis, stable power, 3+ sequences, face-tracking with override
+**Budget**: $2,000–$3,200 (hardware + labor)
 
 ### 🔌 Hardware Assembly
 - [ ] **Raspberry Pi HAT Stack**
@@ -252,6 +253,25 @@
   - [ ] Battery monitoring
   - [ ] Power distribution
   - [ ] Safety fuses
+
+### 👷 Labor & Assembly
+- [ ] **Hardware Assembly** (20-30 hours @ $40-60/hour)
+  - [ ] Mechanical assembly and mounting
+  - [ ] HAT stack installation
+  - [ ] Component mounting and securing
+  - [ ] Cable management and routing
+
+- [ ] **Wiring & Calibration** (10-15 hours)
+  - [ ] Electrical connections and soldering
+  - [ ] Servo calibration and testing
+  - [ ] Motor direction and speed calibration
+  - [ ] Safety system installation (e-stop, fuses)
+
+- [ ] **Software Integration** (5-10 hours)
+  - [ ] Hardware-software integration testing
+  - [ ] Performance optimization
+  - [ ] Troubleshooting and debugging
+  - [ ] Final system validation
 
 ### 🧪 Hardware Testing
 - [ ] **Individual Component Testing**

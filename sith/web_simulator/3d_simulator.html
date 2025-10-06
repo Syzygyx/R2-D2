@@ -14,10 +14,10 @@
 
         body {
             font-family: 'Orbitron', 'Courier New', monospace;
-            background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
-            color: #00d4ff;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            color: #ff0000;
             overflow: hidden;
-            text-shadow: 0 0 10px #00d4ff;
+            text-shadow: 0 0 10px #ff0000;
         }
 
         .container {
@@ -28,11 +28,11 @@
 
         .viewer-section {
             position: relative;
-            background: radial-gradient(ellipse at center, #001122 0%, #000000 100%);
-            border: 2px solid #00d4ff;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            border: 2px solid #ff0000;
             box-shadow: 
-                inset 0 0 50px rgba(0, 212, 255, 0.1),
-                0 0 50px rgba(0, 212, 255, 0.2);
+                inset 0 0 50px rgba(255, 0, 0, 0.2),
+                0 0 50px rgba(255, 0, 0, 0.3);
         }
 
         #threejs-container {
@@ -41,13 +41,13 @@
         }
 
         .controls-section {
-            background: linear-gradient(135deg, rgba(0, 20, 40, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
-            border-left: 2px solid #00d4ff;
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            border-left: 2px solid #ff0000;
             padding: 20px;
             backdrop-filter: blur(10px);
             overflow-y: auto;
             box-shadow: 
-                inset 0 0 30px rgba(0, 212, 255, 0.1),
+                inset 0 0 30px rgba(255, 0, 0, 0.2),
                 -10px 0 30px rgba(0, 0, 0, 0.5);
         }
 
@@ -60,37 +60,38 @@
             font-size: 2em;
             margin-bottom: 10px;
             text-shadow: 
-                0 0 10px #00d4ff,
-                0 0 20px #00d4ff,
-                0 0 30px #00d4ff;
-            color: #00d4ff;
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 30px #ff0000,
+                0 0 40px #ff0000;
+            color: #ff0000;
             font-weight: 900;
             letter-spacing: 2px;
         }
 
         .header p {
             opacity: 0.8;
-            color: #66b3ff;
-            text-shadow: 0 0 5px #66b3ff;
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
             font-size: 0.9em;
         }
 
         .control-panel {
-            background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
-            border: 1px solid #00d4ff;
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
+            border: 1px solid #ff0000;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 
-                0 0 20px rgba(0, 212, 255, 0.1),
-                inset 0 0 20px rgba(0, 212, 255, 0.05);
+                0 0 20px rgba(255, 0, 0, 0.2),
+                inset 0 0 20px rgba(255, 0, 0, 0.1);
         }
 
         .control-panel h3 {
             margin-bottom: 15px;
-            color: #00d4ff;
+            color: #ff0000;
             font-size: 1.3em;
-            text-shadow: 0 0 10px #00d4ff;
+            text-shadow: 0 0 10px #ff0000;
             font-weight: 700;
             letter-spacing: 1px;
         }
@@ -104,30 +105,30 @@
         .command-input input {
             flex: 1;
             padding: 12px;
-            border: 2px solid #00d4ff;
+            border: 2px solid #ff0000;
             border-radius: 8px;
             font-size: 1em;
             background: rgba(0, 0, 0, 0.8);
-            color: #00d4ff;
+            color: #ff0000;
             font-family: 'Orbitron', monospace;
-            text-shadow: 0 0 5px #00d4ff;
+            text-shadow: 0 0 5px #ff0000;
             box-shadow: 
-                inset 0 0 10px rgba(0, 212, 255, 0.1),
-                0 0 10px rgba(0, 212, 255, 0.2);
+                inset 0 0 10px rgba(255, 0, 0, 0.2),
+                0 0 10px rgba(255, 0, 0, 0.3);
         }
 
         .command-input input:focus {
             outline: none;
             box-shadow: 
-                inset 0 0 15px rgba(0, 212, 255, 0.2),
-                0 0 20px rgba(0, 212, 255, 0.4);
+                inset 0 0 15px rgba(255, 0, 0, 0.3),
+                0 0 20px rgba(255, 0, 0, 0.5);
         }
 
         .command-input button {
             padding: 12px 20px;
-            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
             color: #000;
-            border: 2px solid #00d4ff;
+            border: 2px solid #ff0000;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
@@ -135,12 +136,12 @@
             font-weight: 700;
             text-shadow: none;
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
         }
 
         .command-input button:hover {
-            background: linear-gradient(135deg, #00ffff 0%, #00d4ff 100%);
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+            background: linear-gradient(135deg, #ff3333 0%, #ff0000 100%);
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
             transform: translateY(-2px);
         }
 
@@ -672,36 +673,79 @@
                 const starGeometry = new THREE.BufferGeometry();
                 const starCount = 1000;
                 const positions = new Float32Array(starCount * 3);
+                const colors = new Float32Array(starCount * 3);
                 
-                for (let i = 0; i < starCount * 3; i++) {
+                for (let i = 0; i < starCount * 3; i += 3) {
                     positions[i] = (Math.random() - 0.5) * 2000;
+                    positions[i + 1] = (Math.random() - 0.5) * 2000;
+                    positions[i + 2] = (Math.random() - 0.5) * 2000;
+                    
+                    // Mix of red and white stars for Sith theme
+                    const isRedStar = Math.random() < 0.3;
+                    colors[i] = isRedStar ? 1.0 : 0.8;     // R
+                    colors[i + 1] = isRedStar ? 0.2 : 0.8; // G
+                    colors[i + 2] = isRedStar ? 0.2 : 0.8; // B
                 }
                 
                 starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
                 
                 const starMaterial = new THREE.PointsMaterial({
-                    color: 0x00d4ff,
                     size: 2,
                     transparent: true,
-                    opacity: 0.8
+                    opacity: 0.8,
+                    vertexColors: true
                 });
                 
                 const stars = new THREE.Points(starGeometry, starMaterial);
                 this.scene.add(stars);
             }
             
+            async loadR2D2Model(url) {
+                try {
+                    console.log('Loading external R2-D2 model from:', url);
+                    
+                    // This would use GLTFLoader if available
+                    // For now, we'll use the procedural model
+                    console.log('External model loading not implemented, using procedural model');
+                    return false;
+                } catch (error) {
+                    console.error('Error loading external model:', error);
+                    return false;
+                }
+            }
+            
             addGround() {
                 const groundGeometry = new THREE.PlaneGeometry(20, 20);
                 const groundMaterial = new THREE.MeshLambertMaterial({ 
-                    color: 0x001122,
+                    color: 0x220000,
                     transparent: true,
-                    opacity: 0.6
+                    opacity: 0.8,
+                    emissive: 0x110000,
+                    emissiveIntensity: 0.1
                 });
                 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
                 ground.rotation.x = -Math.PI / 2;
                 ground.position.y = -2;
                 ground.receiveShadow = true;
                 this.scene.add(ground);
+                
+                // Add some ground details - glowing lines
+                for (let i = 0; i < 5; i++) {
+                    const lineGeometry = new THREE.PlaneGeometry(15, 0.1);
+                    const lineMaterial = new THREE.MeshBasicMaterial({
+                        color: 0xff0000,
+                        transparent: true,
+                        opacity: 0.3,
+                        emissive: 0xff0000,
+                        emissiveIntensity: 0.2
+                    });
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.rotation.x = -Math.PI / 2;
+                    line.position.y = -1.95;
+                    line.position.x = (i - 2) * 3;
+                    this.scene.add(line);
+                }
             }
             
             showError(message) {
@@ -723,36 +767,74 @@
             
             createR2D2Model() {
                 try {
-                    console.log('Creating R2-D2 model...');
+                    console.log('Creating detailed R2-D2 model...');
                     
                     // Create R2-D2 group
                     this.r2d2 = new THREE.Group();
                 
-                // Main body (cylinder)
-                const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 3, 16);
-                const bodyMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xffffff,
-                    shininess: 100,
-                    emissive: 0x001122,
-                    emissiveIntensity: 0.1
-                });
-                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-                body.position.y = 0;
-                body.castShadow = true;
-                this.r2d2.add(body);
-                
-                // Dome (sphere)
-                const domeGeometry = new THREE.SphereGeometry(1.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-                const domeMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xffffff,
-                    shininess: 100,
-                    emissive: 0x001122,
-                    emissiveIntensity: 0.1
-                });
-                const dome = new THREE.Mesh(domeGeometry, domeMaterial);
-                dome.position.y = 2.2;
-                dome.castShadow = true;
-                this.r2d2.add(dome);
+                    // Main body (more detailed cylinder)
+                    const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.4, 3, 32);
+                    const bodyMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0xffffff,
+                        shininess: 100,
+                        emissive: 0x220000,
+                        emissiveIntensity: 0.1
+                    });
+                    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                    body.position.y = 0;
+                    body.castShadow = true;
+                    this.r2d2.add(body);
+                    
+                    // Body details - horizontal lines
+                    for (let i = 0; i < 3; i++) {
+                        const lineGeometry = new THREE.CylinderGeometry(1.52, 1.52, 0.1, 32);
+                        const lineMaterial = new THREE.MeshPhongMaterial({ 
+                            color: 0x333333,
+                            emissive: 0x110000,
+                            emissiveIntensity: 0.2
+                        });
+                        const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                        line.position.y = -1 + i * 1;
+                        this.r2d2.add(line);
+                    }
+                    
+                    // Dome (more detailed hemisphere)
+                    const domeGeometry = new THREE.SphereGeometry(1.2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+                    const domeMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0xffffff,
+                        shininess: 100,
+                        emissive: 0x220000,
+                        emissiveIntensity: 0.1
+                    });
+                    const dome = new THREE.Mesh(domeGeometry, domeMaterial);
+                    dome.position.y = 2.2;
+                    dome.castShadow = true;
+                    this.r2d2.add(dome);
+                    
+                    // Dome details - center circle
+                    const centerGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.05, 16);
+                    const centerMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x000000,
+                        emissive: 0x220000,
+                        emissiveIntensity: 0.3
+                    });
+                    const center = new THREE.Mesh(centerGeometry, centerMaterial);
+                    center.position.y = 2.2;
+                    center.position.z = 1.1;
+                    this.r2d2.add(center);
+                    
+                    // Dome details - side circles
+                    for (let i = 0; i < 3; i++) {
+                        const angle = (i * Math.PI * 2) / 3;
+                        const sideGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 16);
+                        const side = new THREE.Mesh(sideGeometry, centerMaterial);
+                        side.position.y = 2.2;
+                        side.position.x = Math.cos(angle) * 0.8;
+                        side.position.z = Math.sin(angle) * 0.8 + 0.3;
+                        side.rotation.x = Math.PI / 2;
+                        side.rotation.z = angle;
+                        this.r2d2.add(side);
+                    }
                 
                 // Create dome panels
                 this.createDomePanels();
@@ -832,22 +914,47 @@
             }
             
             createLegs() {
-                const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2);
-                const legMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+                const legMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xffffff,
+                    emissive: 0x220000,
+                    emissiveIntensity: 0.1
+                });
                 
-                // Three legs
+                // Three legs with more detail
                 const legPositions = [
                     { x: 0.8, z: 0 },
                     { x: -0.4, z: 0.7 },
                     { x: -0.4, z: -0.7 }
                 ];
                 
-                legPositions.forEach(pos => {
+                legPositions.forEach((pos, index) => {
+                    // Main leg
+                    const legGeometry = new THREE.CylinderGeometry(0.12, 0.15, 2);
                     const leg = new THREE.Mesh(legGeometry, legMaterial);
                     leg.position.set(pos.x, -1.5, pos.z);
                     leg.castShadow = true;
                     this.r2d2.add(leg);
+                    
+                    // Foot
+                    const footGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.1);
+                    const foot = new THREE.Mesh(footGeometry, legMaterial);
+                    foot.position.set(pos.x, -2.6, pos.z);
+                    foot.castShadow = true;
+                    this.r2d2.add(foot);
+                    
+                    // Leg joint
+                    const jointGeometry = new THREE.SphereGeometry(0.15);
+                    const joint = new THREE.Mesh(jointGeometry, legMaterial);
+                    joint.position.set(pos.x, -0.5, pos.z);
+                    this.r2d2.add(joint);
                 });
+                
+                // Central leg support
+                const supportGeometry = new THREE.CylinderGeometry(0.05, 0.05, 1);
+                const support = new THREE.Mesh(supportGeometry, legMaterial);
+                support.position.y = -1;
+                support.castShadow = true;
+                this.r2d2.add(support);
             }
             
             togglePanel(panelNum) {

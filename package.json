@@ -33,10 +33,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Syzygyx/R2-D2.git"
+    "url": "git+https://github.com/Syzygyx/R2-D2.git"
   },
   "homepage": "https://syzygyx.github.io/R2-D2/",
   "bugs": {
     "url": "https://github.com/Syzygyx/R2-D2/issues"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "dependencies": {
+    "playwright": "^1.55.1",
+    "pyodide": "^0.28.3"
   }
 }

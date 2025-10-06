@@ -341,7 +341,7 @@ Click 'Run' to execute your code!</div>
     </div>
 
     <!-- Local Pyodide -->
-    <script src="pyodide/pyodide.js"></script>
+    <script src="/R2-D2/pyodide/pyodide.js"></script>
 
     <script>
         // Python Control Component
@@ -373,9 +373,9 @@ Click 'Run' to execute your code!</div>
                 try {
                     this.log('Loading Pyodide...', 'info');
                     
-                    // Load Pyodide with local path
+                    // Load Pyodide with absolute path
                     this.pyodide = await loadPyodide({
-                        indexURL: "./pyodide/"
+                        indexURL: "/R2-D2/pyodide/"
                     });
                     
                     this.log('Python loaded successfully!', 'success');

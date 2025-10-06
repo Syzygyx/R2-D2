@@ -338,15 +338,12 @@
                         }
                     };
 
-                    this.updateLoadingText('Creating GoldenLayout instance...');
-                    
-                    // Create GoldenLayout instance with proper initialization
-                    this.layout = new GoldenLayout(config);
-                    this.layout.init();
-
                     this.updateLoadingText('Registering components...');
 
-                    // Register components
+                    // Create GoldenLayout instance first
+                    this.layout = new GoldenLayout();
+
+                    // Register components BEFORE creating the layout
                     this.layout.registerComponent('python', (container, componentState) => {
                         this.updateLoadingText('Loading Python component...');
                         const iframe = document.createElement('iframe');
@@ -398,6 +395,11 @@
                         };
                         container.getElement().append(iframe);
                     });
+
+                    this.updateLoadingText('Creating layout...');
+
+                    // Initialize with config after components are registered
+                    this.layout.init(config);
 
                     this.updateLoadingText('Mounting layout...');
 

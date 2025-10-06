@@ -341,7 +341,7 @@ Click 'Run' to execute your code!</div>
     </div>
 
     <!-- Local Pyodide -->
-    <script src="../pyodide/pyodide.js"></script>
+    <script src="pyodide/pyodide.js"></script>
 
     <script>
         // Python Control Component
@@ -373,8 +373,10 @@ Click 'Run' to execute your code!</div>
                 try {
                     this.log('Loading Pyodide...', 'info');
                     
-                    // Load Pyodide
-                    this.pyodide = await loadPyodide();
+                    // Load Pyodide with local path
+                    this.pyodide = await loadPyodide({
+                        indexURL: "./pyodide/"
+                    });
                     
                     this.log('Python loaded successfully!', 'success');
                     

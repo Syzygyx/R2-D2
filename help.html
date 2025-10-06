@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - SITH Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            color: #ff0000;
+            height: 100vh;
+            overflow: auto;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .container {
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            opacity: 0.8;
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
+            font-size: 1em;
+        }
+
+        .help-section {
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.2),
+                inset 0 0 20px rgba(255, 0, 0, 0.1);
+        }
+
+        .help-section h3 {
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .help-content {
+            color: #00d4ff;
+            text-shadow: 0 0 5px #00d4ff;
+            line-height: 1.6;
+            font-size: 0.9em;
+        }
+
+        .help-content h4 {
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            margin: 15px 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .help-content ul {
+            margin: 10px 0 10px 20px;
+        }
+
+        .help-content li {
+            margin: 5px 0;
+        }
+
+        .help-content code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .command-group {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #ff0000;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .command-group h4 {
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .command-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.8em;
+        }
+
+        .command-code {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .command-desc {
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
+        }
+
+        .troubleshooting {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .troubleshooting h4 {
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            margin-bottom: 10px;
+        }
+
+        .troubleshooting ul {
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .command-list {
+                grid-template-columns: 1fr;
+            }
+
+            .help-content {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section-header">
+            <h2>❓ Help & Documentation</h2>
+            <p>Learn how to use the SITH Integrated Simulator</p>
+        </div>
+
+        <div class="help-section">
+            <h3>🐍 Python Control</h3>
+            <div class="help-content">
+                <p>Write Python code in the editor to control R2-D2 using the SITH API module.</p>
+                <h4>Getting Started:</h4>
+                <ul>
+                    <li>Write Python code in the code editor</li>
+                    <li>Use the <code>sith_api</code> module to control R2-D2</li>
+                    <li>Click 'Run' to execute your code</li>
+                    <li>View output in the console below</li>
+                </ul>
+                <h4>Available Functions:</h4>
+                <ul>
+                    <li><code>sith_api.send_command(cmd)</code> - Send raw Shadow command</li>
+                    <li><code>sith_api.open_panel(num)</code> - Open specific panel (1-16)</li>
+                    <li><code>sith_api.close_panel(num)</code> - Close specific panel (1-16)</li>
+                    <li><code>sith_api.open_all_panels()</code> - Open all panels</li>
+                    <li><code>sith_api.close_all_panels()</code> - Close all panels</li>
+                    <li><code>sith_api.run_sequence(name)</code> - Run sequence by name</li>
+                    <li><code>sith_api.get_status()</code> - Get R2-D2 status</li>
+                    <li><code>sith_api.get_panels()</code> - Get panel states</li>
+                    <li><code>sith_api.reset()</code> - Reset R2-D2</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="help-section">
+            <h3>🤖 3D Viewer</h3>
+            <div class="help-content">
+                <p>Interactive 3D R2-D2 model with real-time panel animation.</p>
+                <h4>Controls:</h4>
+                <ul>
+                    <li><strong>Mouse Drag:</strong> Orbit around R2-D2</li>
+                    <li><strong>Scroll Wheel:</strong> Zoom in/out</li>
+                    <li><strong>Reset Camera:</strong> Return to default view</li>
+                    <li><strong>Wireframe:</strong> Toggle wireframe mode</li>
+                    <li><strong>Lights:</strong> Toggle lighting effects</li>
+                    <li><strong>Reset R2-D2:</strong> Close all panels</li>
+                </ul>
+                <h4>Features:</h4>
+                <ul>
+                    <li>16 animated dome panels</li>
+                    <li>Real-time synchronization with Python commands</li>
+                    <li>Interactive camera controls</li>
+                    <li>Sith-themed lighting and materials</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="help-section">
+            <h3>📚 Shadow Protocol Commands</h3>
+            <div class="help-content">
+                <p>Complete reference for Shadow protocol commands used by R2-D2.</p>
+                
+                <div class="command-list">
+                    <div class="command-group">
+                        <h4>Panel Commands</h4>
+                        <div class="command-item">
+                            <span class="command-code">:OP01-16</span>
+                            <span class="command-desc">Open specific panel</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">:CL01-16</span>
+                            <span class="command-desc">Close specific panel</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">:OP00</span>
+                            <span class="command-desc">Open all panels</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">:CL00</span>
+                            <span class="command-desc">Close all panels</span>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h4>Sequence Commands</h4>
+                        <div class="command-item">
+                            <span class="command-code">:SEwave</span>
+                            <span class="command-desc">Wave sequence</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">:SEscream</span>
+                            <span class="command-desc">Scream sequence</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">:SEdance</span>
+                            <span class="command-desc">Dance sequence</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">:SEmarch</span>
+                            <span class="command-desc">March sequence</span>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h4>Holo Projector</h4>
+                        <div class="command-item">
+                            <span class="command-code">*H001-008</span>
+                            <span class="command-desc">HP effects</span>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h4>Display Commands</h4>
+                        <div class="command-item">
+                            <span class="command-code">@0T1-8</span>
+                            <span class="command-desc">Display patterns</span>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h4>Sound Commands</h4>
+                        <div class="command-item">
+                            <span class="command-code">$A-H</span>
+                            <span class="command-desc">Sound effects</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">$S</span>
+                            <span class="command-desc">Scream sound</span>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h4>Setup Commands</h4>
+                        <div class="command-item">
+                            <span class="command-code">#RST</span>
+                            <span class="command-desc">Reset</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">#CAL</span>
+                            <span class="command-desc">Calibration</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">#TST</span>
+                            <span class="command-desc">Test</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">#VER</span>
+                            <span class="command-desc">Version</span>
+                        </div>
+                        <div class="command-item">
+                            <span class="command-code">#STA</span>
+                            <span class="command-desc">Status</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-section">
+            <h3>📱 Mobile Usage</h3>
+            <div class="help-content">
+                <p>The simulator is fully responsive and works on mobile devices.</p>
+                <h4>Touch Controls:</h4>
+                <ul>
+                    <li><strong>Tap tabs:</strong> Switch between sections</li>
+                    <li><strong>Pinch to zoom:</strong> Zoom in/out on 3D viewer</li>
+                    <li><strong>Drag:</strong> Rotate 3D camera</li>
+                    <li><strong>All buttons:</strong> Touch-friendly sizing</li>
+                </ul>
+                <h4>Mobile Layout:</h4>
+                <ul>
+                    <li>Responsive grid layouts</li>
+                    <li>Optimized font sizes</li>
+                    <li>Touch-friendly button spacing</li>
+                    <li>Vertical tab navigation on small screens</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="help-section">
+            <div class="troubleshooting">
+                <h4>🔧 Troubleshooting</h4>
+                <ul>
+                    <li><strong>Python fails to load:</strong> Refresh the page and wait for Pyodide to initialize</li>
+                    <li><strong>3D viewer not working:</strong> Check browser console for Three.js errors</li>
+                    <li><strong>Commands not executing:</strong> Ensure SITH backend is running on localhost:5000</li>
+                    <li><strong>Slow performance:</strong> Close other browser tabs and try again</li>
+                    <li><strong>Mobile issues:</strong> Use landscape mode for better 3D viewer experience</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="help-section">
+            <h3>🔗 Additional Resources</h3>
+            <div class="help-content">
+                <p>For more information and support:</p>
+                <ul>
+                    <li><strong>GitHub Repository:</strong> <a href="https://github.com/Syzygyx/R2-D2" style="color: #00d4ff;">https://github.com/Syzygyx/R2-D2</a></li>
+                    <li><strong>Documentation:</strong> Check the README.md for detailed setup instructions</li>
+                    <li><strong>Issues:</strong> Report bugs and feature requests on GitHub</li>
+                    <li><strong>Contributing:</strong> Pull requests welcome!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

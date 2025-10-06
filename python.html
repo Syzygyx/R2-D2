@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Control - SITH Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            color: #ff0000;
+            height: 100vh;
+            overflow: hidden;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 15px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            opacity: 0.8;
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
+            font-size: 0.9em;
+        }
+
+        .control-panel {
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
+            border: 1px solid #ff0000;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 
+                0 0 15px rgba(255, 0, 0, 0.2),
+                inset 0 0 15px rgba(255, 0, 0, 0.1);
+        }
+
+        .control-panel h3 {
+            margin-bottom: 10px;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            font-weight: 700;
+            font-size: 1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #000;
+            border: 2px solid #ff0000;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9em;
+            text-shadow: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #ff3333 0%, #ff0000 100%);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: rgba(100, 100, 100, 0.3);
+            color: #666;
+            border-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-shadow: none;
+            box-shadow: none;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, rgba(255, 0, 150, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
+            color: #ff0096;
+            border-color: #ff0096;
+            box-shadow: 0 0 8px rgba(255, 0, 150, 0.2);
+        }
+
+        .btn.secondary:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255, 0, 150, 0.5) 0%, rgba(0, 0, 0, 0.9) 100%);
+            box-shadow: 0 0 15px rgba(255, 0, 150, 0.4);
+        }
+
+        .code-editor {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff0000;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+            box-shadow: 
+                inset 0 0 10px rgba(255, 0, 0, 0.2),
+                0 0 10px rgba(255, 0, 0, 0.3);
+            width: 100%;
+            height: 300px;
+            resize: vertical;
+            outline: none;
+        }
+
+        .code-editor:focus {
+            box-shadow: 
+                inset 0 0 15px rgba(255, 0, 0, 0.3),
+                0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .output-console {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff0000;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 255, 0, 0.1),
+                0 0 10px rgba(0, 255, 0, 0.2);
+            width: 100%;
+            height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+        }
+
+        .status-bar {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(40, 0, 0, 0.6) 100%);
+            border: 1px solid #ff0000;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.1),
+                inset 0 0 10px rgba(255, 0, 0, 0.05);
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            font-size: 0.8em;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .loading h2 {
+            margin-bottom: 15px;
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 0, 0, 0.3);
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+        }
+
+        .success {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .info {
+            color: #00d4ff;
+            text-shadow: 0 0 5px #00d4ff;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .code-editor {
+                height: 200px;
+                font-size: 12px;
+            }
+
+            .output-console {
+                height: 150px;
+                font-size: 11px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section-header">
+            <h2>🐍 Python Control</h2>
+            <p>Write Python scripts to control R2-D2</p>
+        </div>
+
+        <div class="control-panel">
+            <h3>Python Controls</h3>
+            <div class="button-group">
+                <button class="btn" id="runBtn">▶️ Run</button>
+                <button class="btn secondary" id="clearBtn">🗑️ Clear</button>
+                <button class="btn secondary" id="stopBtn" disabled>⏹️ Stop</button>
+            </div>
+        </div>
+
+        <textarea class="code-editor" id="codeEditor" placeholder="# SITH Python Control
+# Write your Python code here to control R2-D2
+
+import sith_api
+
+# Example: Open all panels
+sith_api.open_all_panels()
+
+# Example: Run a sequence
+sith_api.run_sequence('wave')
+
+# Example: Send custom Shadow command
+sith_api.send_command(':OP01')  # Open panel 1
+
+# Example: Get status
+status = sith_api.get_status()
+print(f'R2-D2 Status: {status}')"># SITH Python Control
+# Write your Python code here to control R2-D2
+
+import sith_api
+
+# Example: Open all panels
+sith_api.open_all_panels()
+
+# Example: Run a sequence
+sith_api.run_sequence('wave')
+
+# Example: Send custom Shadow command
+sith_api.send_command(':OP01')  # Open panel 1
+
+# Example: Get status
+status = sith_api.get_status()
+print(f'R2-D2 Status: {status}')
+</textarea>
+
+        <div class="output-console" id="outputConsole">Ready to execute Python code...
+
+SITH Python Control v1.0
+=========================
+- Use sith_api module to control R2-D2
+- Available functions:
+  * sith_api.send_command(cmd)
+  * sith_api.open_panel(num)
+  * sith_api.close_panel(num)
+  * sith_api.open_all_panels()
+  * sith_api.close_all_panels()
+  * sith_api.run_sequence(name)
+  * sith_api.get_status()
+  * sith_api.get_panels()
+  * sith_api.reset()
+
+Click 'Run' to execute your code!</div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <span>Python:</span>
+                <span id="pythonStatus">Loading...</span>
+            </div>
+            <div class="status-item">
+                <span>API:</span>
+                <span id="apiStatus">Connecting...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <h2>🐍 Loading Python...</h2>
+        <div class="spinner"></div>
+        <p>Initializing Pyodide and SITH API</p>
+    </div>
+
+    <!-- Local Pyodide -->
+    <script src="../pyodide/pyodide.js"></script>
+
+    <script>
+        // Python Control Component
+        class PythonControl {
+            constructor() {
+                this.pyodide = null;
+                this.isRunning = false;
+                this.apiUrl = 'http://localhost:5000';
+                
+                this.initializeEventListeners();
+                this.initializePython();
+            }
+            
+            initializeEventListeners() {
+                document.getElementById('runBtn').addEventListener('click', () => {
+                    this.runScript();
+                });
+                
+                document.getElementById('clearBtn').addEventListener('click', () => {
+                    this.clearEditor();
+                });
+                
+                document.getElementById('stopBtn').addEventListener('click', () => {
+                    this.stopScript();
+                });
+            }
+            
+            async initializePython() {
+                try {
+                    this.log('Loading Pyodide...', 'info');
+                    
+                    // Load Pyodide
+                    this.pyodide = await loadPyodide();
+                    
+                    this.log('Python loaded successfully!', 'success');
+                    
+                    // Install required packages
+                    await this.pyodide.loadPackage(['micropip']);
+                    await this.pyodide.runPython(`
+                        import micropip
+                        await micropip.install(['requests'])
+                    `);
+                    
+                    // Create SITH API module
+                    this.createSITHAPIModule();
+                    
+                    // Hide loading screen
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    this.log('Python control ready!', 'success');
+                    this.updateStatus('pythonStatus', 'Ready');
+                    this.updateStatus('apiStatus', 'Connected');
+                    
+                } catch (error) {
+                    this.log(`Error initializing Python: ${error.message}`, 'error');
+                    this.updateStatus('pythonStatus', 'Error');
+                }
+            }
+            
+            createSITHAPIModule() {
+                const sithApiCode = `
+import requests
+import json
+import time
+
+class SITHAPI:
+    def __init__(self, base_url='${this.apiUrl}'):
+        self.base_url = base_url
+        self.session = requests.Session()
+    
+    def send_command(self, command):
+        """Send a Shadow command to R2-D2"""
+        try:
+            response = self.session.post(f'{self.base_url}/api/command', 
+                                      json={'command': command})
+            result = response.json()
+            
+            # Notify parent window of panel changes
+            if (command.startsWith(':OP') || command.startsWith(':CL')) {
+                parent.postMessage({
+                    type: 'panel_update',
+                    command: command
+                }, '*');
+            }
+            
+            return result
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+    
+    def open_panel(self, panel_num):
+        """Open a specific panel (1-16)"""
+        if 1 <= panel_num <= 16:
+            return self.send_command(f':OP{panel_num:02d}')
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def close_panel(self, panel_num):
+        """Close a specific panel (1-16)"""
+        if 1 <= panel_num <= 16:
+            return self.send_command(f':CL{panel_num:02d}')
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def open_all_panels(self):
+        """Open all panels"""
+        return self.send_command(':OP00')
+    
+    def close_all_panels(self):
+        """Close all panels"""
+        return self.send_command(':CL00')
+    
+    def run_sequence(self, sequence_name):
+        """Run a sequence by name"""
+        return self.send_command(f':SE{sequence_name}')
+    
+    def get_status(self):
+        """Get current R2-D2 status"""
+        try:
+            response = self.session.get(f'{this.base_url}/api/status')
+            return response.json()
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+    
+    def get_panels(self):
+        """Get current panel states"""
+        try:
+            response = self.session.get(f'{this.base_url}/api/panels')
+            return response.json()
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+    
+    def reset(self):
+        """Reset R2-D2 to default state"""
+        try:
+            response = self.session.post(f'{this.base_url}/api/reset')
+            return response.json()
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+# Create global instance
+sith_api = SITHAPI()
+`;
+                
+                this.pyodide.runPython(sithApiCode);
+            }
+            
+            async runScript() {
+                if (this.isRunning) {
+                    this.log('Script is already running!', 'error');
+                    return;
+                }
+                
+                const code = document.getElementById('codeEditor').value;
+                if (!code.trim()) {
+                    this.log('No code to execute!', 'error');
+                    return;
+                }
+                
+                this.isRunning = true;
+                this.updateStatus('pythonStatus', 'Running');
+                document.getElementById('runBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                
+                this.log('Executing Python script...', 'info');
+                this.log('=' * 50, 'info');
+                
+                try {
+                    // Capture print output
+                    this.pyodide.runPython(`
+import sys
+from io import StringIO
+
+class OutputCapture:
+    def __init__(self):
+        self.buffer = StringIO()
+    
+    def write(self, text):
+        self.buffer.write(text)
+        js_output(text)
+    
+    def flush(self):
+        pass
+
+capture = OutputCapture()
+sys.stdout = capture
+sys.stderr = capture
+`);
+                    
+                    // Execute user code
+                    const result = this.pyodide.runPython(code);
+                    
+                    if (result !== undefined) {
+                        this.log(`Result: ${result}`, 'success');
+                    }
+                    
+                } catch (error) {
+                    this.log(`Error: ${error.message}`, 'error');
+                } finally {
+                    this.isRunning = false;
+                    this.updateStatus('pythonStatus', 'Ready');
+                    document.getElementById('runBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                    this.log('=' * 50, 'info');
+                    this.log('Script execution completed.', 'info');
+                }
+            }
+            
+            stopScript() {
+                this.isRunning = false;
+                this.updateStatus('pythonStatus', 'Stopped');
+                document.getElementById('runBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                this.log('Script execution stopped by user.', 'error');
+            }
+            
+            clearEditor() {
+                document.getElementById('codeEditor').value = '';
+                this.log('Editor cleared.', 'info');
+            }
+            
+            log(message, type = 'info') {
+                const console = document.getElementById('outputConsole');
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = `[${timestamp}] ${message}\n`;
+                
+                console.textContent += logEntry;
+                console.scrollTop = console.scrollHeight;
+            }
+            
+            updateStatus(elementId, status) {
+                document.getElementById(elementId).textContent = status;
+            }
+        }
+
+        // Global function for Python output
+        function js_output(text) {
+            const console = document.getElementById('outputConsole');
+            console.textContent += text;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Initialize when page loads
+        let pythonControl;
+        document.addEventListener('DOMContentLoaded', () => {
+            pythonControl = new PythonControl();
+            window.pythonControl = pythonControl;
+        });
+    </script>
+</body>
+</html>

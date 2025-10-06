@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Viewer - SITH Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            color: #ff0000;
+            height: 100vh;
+            overflow: hidden;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 15px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            opacity: 0.8;
+            color: #ff6666;
+            text-shadow: 0 0 5px #ff6666;
+            font-size: 0.9em;
+        }
+
+        .viewer-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #000;
+            border: 2px solid #ff0000;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 0.9em;
+            text-shadow: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #ff3333 0%, #ff0000 100%);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: rgba(100, 100, 100, 0.3);
+            color: #666;
+            border-color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-shadow: none;
+            box-shadow: none;
+        }
+
+        .viewer-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff0000;
+            border-radius: 6px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 10px rgba(255, 0, 0, 0.2),
+                0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .status-bar {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(40, 0, 0, 0.6) 100%);
+            border: 1px solid #ff0000;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.1),
+                inset 0 0 10px rgba(255, 0, 0, 0.05);
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            font-size: 0.8em;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .loading h2 {
+            margin-bottom: 15px;
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 0, 0, 0.3);
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .viewer-controls {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+
+            .viewer-container {
+                height: calc(100vh - 200px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section-header">
+            <h2>🤖 3D R2-D2 Viewer</h2>
+            <p>Real-time 3D visualization</p>
+        </div>
+
+        <div class="viewer-controls">
+            <button class="btn" onclick="resetCamera()">🎥 Reset Camera</button>
+            <button class="btn" onclick="toggleWireframe()">🔲 Wireframe</button>
+            <button class="btn" onclick="toggleLights()">💡 Lights</button>
+            <button class="btn" onclick="resetR2D2()">🔄 Reset R2-D2</button>
+        </div>
+
+        <div class="viewer-container" id="viewerContainer">
+            <div class="loading" id="loading3D">
+                <h2>🤖 Loading R2-D2...</h2>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <span>3D Status:</span>
+                <span id="viewerStatus">Initializing...</span>
+            </div>
+            <div class="status-item">
+                <span>Panels:</span>
+                <span id="panelStatus">0/16 Open</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // 3D Viewer Component
+        class Viewer3D {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.controls = null;
+                this.r2d2 = null;
+                this.panels = [];
+                this.wireframe = false;
+                this.lightsOn = true;
+                
+                this.initialize3D();
+                this.setupMessageListener();
+            }
+            
+            async initialize3D() {
+                try {
+                    const container = document.getElementById('viewerContainer');
+                    const loading = document.getElementById('loading3D');
+                    
+                    // Create scene
+                    this.scene = new THREE.Scene();
+                    this.scene.background = new THREE.Color(0x000000);
+                    
+                    // Create camera
+                    this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+                    this.camera.position.set(0, 5, 10);
+                    
+                    // Create renderer
+                    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                    this.renderer.setSize(container.clientWidth, container.clientHeight);
+                    this.renderer.shadowMap.enabled = true;
+                    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                    
+                    container.appendChild(this.renderer.domElement);
+                    
+                    // Create controls
+                    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                    this.controls.enableDamping = true;
+                    this.controls.dampingFactor = 0.05;
+                    
+                    // Add lighting
+                    this.addLighting();
+                    
+                    // Create R2-D2 model
+                    this.createR2D2Model();
+                    
+                    // Add starfield
+                    this.createStarfield();
+                    
+                    // Add ground
+                    this.addGround();
+                    
+                    // Start render loop
+                    this.animate();
+                    
+                    // Hide loading
+                    loading.style.display = 'none';
+                    
+                    this.updateStatus('viewerStatus', 'Ready');
+                    
+                } catch (error) {
+                    console.error('Error initializing 3D:', error);
+                    this.updateStatus('viewerStatus', 'Error');
+                }
+            }
+            
+            addLighting() {
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+                this.scene.add(ambientLight);
+                
+                // Directional light
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(10, 10, 5);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.mapSize.width = 2048;
+                directionalLight.shadow.mapSize.height = 2048;
+                this.scene.add(directionalLight);
+                
+                // Point light for R2-D2 glow
+                const pointLight = new THREE.PointLight(0xff0000, 0.5, 20);
+                pointLight.position.set(0, 2, 0);
+                this.scene.add(pointLight);
+            }
+            
+            createR2D2Model() {
+                const group = new THREE.Group();
+                
+                // Body
+                const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 2, 16);
+                const bodyMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xffffff,
+                    emissive: 0x220000,
+                    shininess: 100
+                });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.position.y = 1;
+                body.castShadow = true;
+                group.add(body);
+                
+                // Add body details
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const x = Math.cos(angle) * 1.6;
+                    const z = Math.sin(angle) * 1.6;
+                    
+                    const lineGeometry = new THREE.CylinderGeometry(0.02, 0.02, 1.5, 8);
+                    const lineMaterial = new THREE.MeshPhongMaterial({ color: 0x666666 });
+                    const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                    line.position.set(x, 1, z);
+                    line.rotation.z = Math.PI / 2;
+                    group.add(line);
+                }
+                
+                // Dome
+                const domeGeometry = new THREE.SphereGeometry(1.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+                const domeMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xffffff,
+                    emissive: 0x220000,
+                    shininess: 100
+                });
+                const dome = new THREE.Mesh(domeGeometry, domeMaterial);
+                dome.position.y = 2.2;
+                dome.castShadow = true;
+                group.add(dome);
+                
+                // Create dome panels
+                this.createDomePanels(group);
+                
+                // Legs
+                this.createLegs(group);
+                
+                this.r2d2 = group;
+                this.scene.add(group);
+            }
+            
+            createDomePanels(group) {
+                this.panels = [];
+                
+                for (let i = 0; i < 16; i++) {
+                    const angle = (i / 16) * Math.PI * 2;
+                    const x = Math.cos(angle) * 1.1;
+                    const z = Math.sin(angle) * 1.1;
+                    
+                    const panelGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.05);
+                    const panelMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x333333,
+                        emissive: 0x110000
+                    });
+                    const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+                    
+                    panel.position.set(x, 2.2, z);
+                    panel.lookAt(x * 2, 2.2, z * 2);
+                    panel.userData = { index: i, open: false };
+                    
+                    group.add(panel);
+                    this.panels.push(panel);
+                }
+            }
+            
+            createLegs(group) {
+                // Left leg
+                const leftLegGeometry = new THREE.CylinderGeometry(0.3, 0.3, 1.5, 8);
+                const legMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xffffff,
+                    emissive: 0x220000
+                });
+                const leftLeg = new THREE.Mesh(leftLegGeometry, legMaterial);
+                leftLeg.position.set(-0.8, 0.25, 0);
+                leftLeg.castShadow = true;
+                group.add(leftLeg);
+                
+                // Right leg
+                const rightLeg = leftLeg.clone();
+                rightLeg.position.set(0.8, 0.25, 0);
+                group.add(rightLeg);
+                
+                // Center leg
+                const centerLeg = leftLeg.clone();
+                centerLeg.position.set(0, 0.25, 0);
+                centerLeg.scale.set(0.8, 1, 0.8);
+                group.add(centerLeg);
+            }
+            
+            createStarfield() {
+                const starGeometry = new THREE.BufferGeometry();
+                const starCount = 1000;
+                const positions = new Float32Array(starCount * 3);
+                
+                for (let i = 0; i < starCount * 3; i += 3) {
+                    positions[i] = (Math.random() - 0.5) * 200;
+                    positions[i + 1] = (Math.random() - 0.5) * 200;
+                    positions[i + 2] = (Math.random() - 0.5) * 200;
+                }
+                
+                starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                
+                const starMaterial = new THREE.PointsMaterial({
+                    color: Math.random() < 0.3 ? 0xff0000 : 0xffffff,
+                    size: 2,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const stars = new THREE.Points(starGeometry, starMaterial);
+                this.scene.add(stars);
+            }
+            
+            addGround() {
+                const groundGeometry = new THREE.PlaneGeometry(20, 20);
+                const groundMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0x220000,
+                    emissive: 0x110000
+                });
+                const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+                ground.rotation.x = -Math.PI / 2;
+                ground.receiveShadow = true;
+                this.scene.add(ground);
+                
+                // Add glowing lines
+                const lineGeometry = new THREE.BufferGeometry();
+                const linePositions = [];
+                for (let i = 0; i < 20; i++) {
+                    linePositions.push(-10, 0, -10 + i);
+                    linePositions.push(10, 0, -10 + i);
+                    linePositions.push(-10 + i, 0, -10);
+                    linePositions.push(-10 + i, 0, 10);
+                }
+                lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+                
+                const lineMaterial = new THREE.LineBasicMaterial({ 
+                    color: 0xff0000,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+                this.scene.add(lines);
+            }
+            
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                if (this.controls) {
+                    this.controls.update();
+                }
+                
+                if (this.renderer && this.scene && this.camera) {
+                    this.renderer.render(this.scene, this.camera);
+                }
+            }
+            
+            updatePanels(command) {
+                if (command.startsWith(':OP')) {
+                    const panelNum = parseInt(command.substring(3));
+                    if (panelNum === 0) {
+                        // Open all panels
+                        this.panels.forEach(panel => {
+                            panel.userData.open = true;
+                            panel.position.y += 0.1;
+                        });
+                    } else if (panelNum >= 1 && panelNum <= 16) {
+                        // Open specific panel
+                        const panel = this.panels[panelNum - 1];
+                        if (panel) {
+                            panel.userData.open = true;
+                            panel.position.y += 0.1;
+                        }
+                    }
+                } else if (command.startsWith(':CL')) {
+                    const panelNum = parseInt(command.substring(3));
+                    if (panelNum === 0) {
+                        // Close all panels
+                        this.panels.forEach(panel => {
+                            panel.userData.open = false;
+                            panel.position.y -= 0.1;
+                        });
+                    } else if (panelNum >= 1 && panelNum <= 16) {
+                        // Close specific panel
+                        const panel = this.panels[panelNum - 1];
+                        if (panel) {
+                            panel.userData.open = false;
+                            panel.position.y -= 0.1;
+                        }
+                    }
+                }
+                
+                this.updatePanelStatus();
+            }
+            
+            updatePanelStatus() {
+                const openPanels = this.panels.filter(panel => panel.userData.open).length;
+                this.updateStatus('panelStatus', `${openPanels}/16 Open`);
+            }
+            
+            updateStatus(elementId, status) {
+                document.getElementById(elementId).textContent = status;
+            }
+            
+            setupMessageListener() {
+                window.addEventListener('message', (event) => {
+                    if (event.data.type === 'panel_update') {
+                        this.updatePanels(event.data.command);
+                    }
+                });
+            }
+            
+            // 3D Controls
+            resetCamera() {
+                if (this.camera && this.controls) {
+                    this.camera.position.set(0, 5, 10);
+                    this.controls.target.set(0, 0, 0);
+                    this.controls.update();
+                }
+            }
+            
+            toggleWireframe() {
+                this.wireframe = !this.wireframe;
+                if (this.r2d2) {
+                    this.r2d2.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material.wireframe = this.wireframe;
+                        }
+                    });
+                }
+            }
+            
+            toggleLights() {
+                this.lightsOn = !this.lightsOn;
+                this.scene.traverse((child) => {
+                    if (child.isLight) {
+                        child.visible = this.lightsOn;
+                    }
+                });
+            }
+            
+            resetR2D2() {
+                this.panels.forEach(panel => {
+                    panel.userData.open = false;
+                    panel.position.y = 2.2;
+                });
+                this.updatePanelStatus();
+            }
+        }
+
+        // Global functions for external access
+        function resetCamera() {
+            if (window.viewer3D) {
+                window.viewer3D.resetCamera();
+            }
+        }
+
+        function toggleWireframe() {
+            if (window.viewer3D) {
+                window.viewer3D.toggleWireframe();
+            }
+        }
+
+        function toggleLights() {
+            if (window.viewer3D) {
+                window.viewer3D.toggleLights();
+            }
+        }
+
+        function resetR2D2() {
+            if (window.viewer3D) {
+                window.viewer3D.resetR2D2();
+            }
+        }
+
+        // Initialize when page loads
+        let viewer3D;
+        document.addEventListener('DOMContentLoaded', () => {
+            viewer3D = new Viewer3D();
+            window.viewer3D = viewer3D;
+        });
+    </script>
+</body>
+</html>

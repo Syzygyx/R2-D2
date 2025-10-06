@@ -299,12 +299,24 @@
             createR2D2Model() {
                 const group = new THREE.Group();
                 
+                // Load textures
+                const textureLoader = new THREE.TextureLoader();
+                
+                // Load R2-D2 textures
+                const diffuseTexture = textureLoader.load('models/r2d2/R2D2_Diffuse_1.png');
+                const specularTexture = textureLoader.load('models/r2d2/R2D2_Specular_1.png');
+                const illuminationTexture = textureLoader.load('models/r2d2/R2D2_Illumination.png');
+                const reflectionTexture = textureLoader.load('models/r2d2/R2D2_Reflection_1.png');
+                
                 // Body
                 const bodyGeometry = new THREE.CylinderGeometry(1.5, 1.5, 2, 16);
                 const bodyMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xffffff,
-                    emissive: 0x220000,
-                    shininess: 100
+                    map: diffuseTexture,
+                    specularMap: specularTexture,
+                    emissiveMap: illuminationTexture,
+                    envMap: reflectionTexture,
+                    shininess: 100,
+                    transparent: true
                 });
                 const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
                 body.position.y = 1;
@@ -328,9 +340,12 @@
                 // Dome
                 const domeGeometry = new THREE.SphereGeometry(1.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
                 const domeMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xffffff,
-                    emissive: 0x220000,
-                    shininess: 100
+                    map: diffuseTexture,
+                    specularMap: specularTexture,
+                    emissiveMap: illuminationTexture,
+                    envMap: reflectionTexture,
+                    shininess: 100,
+                    transparent: true
                 });
                 const dome = new THREE.Mesh(domeGeometry, domeMaterial);
                 dome.position.y = 2.2;
@@ -350,6 +365,13 @@
             createDomePanels(group) {
                 this.panels = [];
                 
+                // Load textures for panels
+                const textureLoader = new THREE.TextureLoader();
+                const diffuseTexture = textureLoader.load('models/r2d2/R2D2_Diffuse_1.png');
+                const specularTexture = textureLoader.load('models/r2d2/R2D2_Specular_1.png');
+                const illuminationTexture = textureLoader.load('models/r2d2/R2D2_Illumination.png');
+                const reflectionTexture = textureLoader.load('models/r2d2/R2D2_Reflection_1.png');
+                
                 for (let i = 0; i < 16; i++) {
                     const angle = (i / 16) * Math.PI * 2;
                     const x = Math.cos(angle) * 1.1;
@@ -357,8 +379,12 @@
                     
                     const panelGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.05);
                     const panelMaterial = new THREE.MeshPhongMaterial({ 
-                        color: 0x333333,
-                        emissive: 0x110000
+                        map: diffuseTexture,
+                        specularMap: specularTexture,
+                        emissiveMap: illuminationTexture,
+                        envMap: reflectionTexture,
+                        shininess: 100,
+                        transparent: true
                     });
                     const panel = new THREE.Mesh(panelGeometry, panelMaterial);
                     
@@ -372,11 +398,22 @@
             }
             
             createLegs(group) {
+                // Load textures for legs
+                const textureLoader = new THREE.TextureLoader();
+                const diffuseTexture = textureLoader.load('models/r2d2/R2D2_Diffuse_1.png');
+                const specularTexture = textureLoader.load('models/r2d2/R2D2_Specular_1.png');
+                const illuminationTexture = textureLoader.load('models/r2d2/R2D2_Illumination.png');
+                const reflectionTexture = textureLoader.load('models/r2d2/R2D2_Reflection_1.png');
+                
                 // Left leg
                 const leftLegGeometry = new THREE.CylinderGeometry(0.3, 0.3, 1.5, 8);
                 const legMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xffffff,
-                    emissive: 0x220000
+                    map: diffuseTexture,
+                    specularMap: specularTexture,
+                    emissiveMap: illuminationTexture,
+                    envMap: reflectionTexture,
+                    shininess: 100,
+                    transparent: true
                 });
                 const leftLeg = new THREE.Mesh(leftLegGeometry, legMaterial);
                 leftLeg.position.set(-0.8, 0.25, 0);

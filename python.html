@@ -652,6 +652,89 @@ sith = SITHAPI()
                 }
             }
             
+            createEmergencySithModule() {
+                // Create emergency sith module and register it globally
+                const emergencySithCode = `
+class SITHAPI:
+    def __init__(self, base_url='http://localhost:5000'):
+        self.base_url = base_url
+        print("Emergency SITH API activated")
+    
+    def send_command(self, command):
+        print(f"Emergency simulated command: {command}")
+        return {'success': True, 'message': f'Emergency: {command}'}
+    
+    def open_panel(self, panel_num):
+        if 1 <= panel_num <= 16:
+            print(f"Emergency: Opening panel {panel_num}")
+            return {'success': True, 'message': f'Emergency: Opened panel {panel_num}'}
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def close_panel(self, panel_num):
+        if 1 <= panel_num <= 16:
+            print(f"Emergency: Closing panel {panel_num}")
+            return {'success': True, 'message': f'Emergency: Closed panel {panel_num}'}
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def open_all_panels(self):
+        print("Emergency: Opening all panels")
+        return {'success': True, 'message': 'Emergency: Opened all panels'}
+    
+    def close_all_panels(self):
+        print("Emergency: Closing all panels")
+        return {'success': True, 'message': 'Emergency: Closed all panels'}
+    
+    def run_sequence(self, sequence_name):
+        print(f"Emergency: Running sequence {sequence_name}")
+        return {'success': True, 'message': f'Emergency: Ran sequence {sequence_name}'}
+    
+    def get_status(self):
+        return {'success': True, 'status': 'emergency_mode', 'panels': 'all_closed'}
+    
+    def get_panels(self):
+        return {'success': True, 'panels': [False] * 16}
+    
+    def reset(self):
+        print("Emergency: Resetting R2-D2")
+        return {'success': True, 'message': 'Emergency: Reset complete'}
+    
+    def set_servo(self, servo_num, position):
+        if 1 <= servo_num <= 8 and 0 <= position <= 180:
+            print(f"Emergency: Setting servo {servo_num} to {position}")
+            return {'success': True, 'message': f'Emergency: Servo {servo_num} set to {position}'}
+        return {'success': False, 'error': 'Servo number must be 1-8, position 0-180'}
+    
+    def set_dome_motor(self, direction, speed=50):
+        if direction in ['CW', 'CCW', 'STOP']:
+            print(f"Emergency: Dome motor {direction} at speed {speed}")
+            return {'success': True, 'message': f'Emergency: Dome {direction} at {speed}%'}
+        return {'success': False, 'error': 'Direction must be CW, CCW, or STOP'}
+    
+    def dome_rotate_cw(self, speed=50):
+        return self.set_dome_motor('CW', speed)
+    
+    def dome_rotate_ccw(self, speed=50):
+        return self.set_dome_motor('CCW', speed)
+    
+    def dome_stop(self):
+        return self.set_dome_motor('STOP', 0)
+
+# Create global instance
+sith = SITHAPI()
+`;
+                
+                try {
+                    this.pyodide.runPython(emergencySithCode);
+                    
+                    // Store the sith module for later use
+                    this.sithModule = this.pyodide.globals.get('sith');
+                    
+                    this.log('Emergency SITH API created and registered', 'warning');
+                } catch (error) {
+                    this.log(`Emergency SITH API creation failed: ${error.message}`, 'error');
+                }
+            }
+            
             createEmergencyFallback() {
                 // Emergency fallback - inject sith module directly into user code
                 const emergencyCode = `
@@ -760,6 +843,22 @@ sith = SITHAPI()
                     // Ensure sith module is available in global scope
                     if (this.sithModule) {
                         this.pyodide.globals.set('sith', this.sithModule);
+                    } else {
+                        // Create emergency sith module if not available
+                        this.createEmergencySithModule();
+                    }
+                    
+                    // Verify sith module is available
+                    try {
+                        const sithCheck = this.pyodide.runPython('sith');
+                        if (sithCheck) {
+                            this.log('SITH module verified in global scope', 'success');
+                        } else {
+                            throw new Error('SITH module not found');
+                        }
+                    } catch (error) {
+                        this.log('SITH module verification failed, creating emergency fallback', 'warning');
+                        this.createEmergencySithModule();
                     }
                     
                     // Capture print output and ensure sith module is available

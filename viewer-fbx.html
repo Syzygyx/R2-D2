@@ -211,6 +211,10 @@
                 <div class="status-indicator" id="panelStatusIndicator"></div>
                 <span id="panelStatus">0/16 Open</span>
             </div>
+            <div class="status-item">
+                <div class="status-indicator" id="cameraStatusIndicator"></div>
+                <span id="cameraStatus">Camera: Position(0,0,0) Target(0,0,0)</span>
+            </div>
         </div>
     </div>
 
@@ -249,7 +253,7 @@
                     
                     // Create camera
                     this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-                    this.camera.position.set(5, 3, 5);
+                    this.camera.position.set(2, 1.5, 2);
                     
                     // Create renderer
                     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -293,12 +297,12 @@
             }
             
             setupLighting() {
-                // Ambient light
-                const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+                // Much brighter ambient light
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
                 this.scene.add(ambientLight);
                 
-                // Directional light
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                // Brighter directional light (main light)
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
                 directionalLight.position.set(10, 10, 5);
                 directionalLight.castShadow = true;
                 directionalLight.shadow.mapSize.width = 2048;
@@ -307,10 +311,29 @@
                 directionalLight.shadow.camera.far = 50;
                 this.scene.add(directionalLight);
                 
-                // Red accent light
-                const pointLight = new THREE.PointLight(0xff0000, 0.5, 20);
+                // Brighter red accent light
+                const pointLight = new THREE.PointLight(0xff0000, 1.5, 50);
                 pointLight.position.set(0, 2, 0);
                 this.scene.add(pointLight);
+                
+                // Additional fill light from the front
+                const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
+                fillLight.position.set(-5, 3, 5);
+                this.scene.add(fillLight);
+                
+                // Rim light for better definition
+                const rimLight = new THREE.DirectionalLight(0x6666ff, 0.8);
+                rimLight.position.set(0, 5, -10);
+                this.scene.add(rimLight);
+                
+                // Additional point lights around the model
+                const light1 = new THREE.PointLight(0xffaa00, 0.6, 50);
+                light1.position.set(3, 2, 3);
+                this.scene.add(light1);
+                
+                const light2 = new THREE.PointLight(0x00aaff, 0.6, 50);
+                light2.position.set(-3, 2, 3);
+                this.scene.add(light2);
             }
             
             createR2D2Model() {
@@ -321,8 +344,8 @@
                     console.log('Model children:', fbx.children.length);
                     console.log('Model animations:', fbx.animations ? fbx.animations.length : 'No animations');
                     
-                    // Scale and position the model
-                    fbx.scale.setScalar(0.1); // Adjust scale as needed
+                    // Scale and position the model - make it larger
+                    fbx.scale.setScalar(0.3); // Much larger scale for better visibility
                     fbx.position.set(0, 0, 0);
                     
                     // Enable shadows and apply materials
@@ -391,6 +414,9 @@
                     
                     this.updateStatus('viewerStatus', 'R2-D2 Model Loaded');
                     
+                    // Update camera status after model is loaded
+                    this.updateCameraStatus();
+                    
                 }, (progress) => {
                     console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
                     this.updateStatus('viewerStatus', `Loading R2-D2: ${Math.round(progress.loaded / progress.total * 100)}%`);
@@ -426,15 +452,15 @@
                 const fov = this.camera.fov * (Math.PI / 180);
                 const distance = maxDim / (2 * Math.tan(fov / 2));
                 
-                // Add some padding
-                const padding = 1.5;
+                // Much closer padding for better visibility
+                const padding = 0.8;
                 const targetDistance = distance * padding;
                 
-                // Position camera to view the model
+                // Position camera much closer to the model
                 this.camera.position.set(
-                    center.x + targetDistance * 0.7,
-                    center.y + targetDistance * 0.5,
-                    center.z + targetDistance * 0.7
+                    center.x + targetDistance * 0.5,
+                    center.y + targetDistance * 0.3,
+                    center.z + targetDistance * 0.5
                 );
                 
                 // Look at the center of the model
@@ -444,9 +470,9 @@
                 this.controls.target.copy(center);
                 this.controls.update();
                 
-                // Set up camera limits
-                this.controls.minDistance = targetDistance * 0.5;
-                this.controls.maxDistance = targetDistance * 3;
+                // Set up camera limits - much closer range
+                this.controls.minDistance = targetDistance * 0.3;
+                this.controls.maxDistance = targetDistance * 2;
                 
                 console.log('Camera positioned at:', this.camera.position);
                 console.log('Camera looking at:', center);
@@ -492,9 +518,19 @@
                 dome.castShadow = true;
                 group.add(dome);
                 
+                // Scale up the fallback model for better visibility
+                group.scale.setScalar(2.0);
+                
                 this.r2d2 = group;
                 this.scene.add(group);
+                
+                // Fit the fallback model in view
+                this.fitModelInView(group);
+                
                 this.updateStatus('viewerStatus', 'Fallback Model Loaded');
+                
+                // Update camera status after fallback model is loaded
+                this.updateCameraStatus();
             }
             
             createDomePanels(group) {
@@ -590,12 +626,28 @@
                 
                 this.controls.update();
                 this.renderer.render(this.scene, this.camera);
+                
+                // Update camera status display
+                this.updateCameraStatus();
             }
             
             updateStatus(type, message) {
                 const statusElement = document.getElementById(type);
                 if (statusElement) {
                     statusElement.textContent = message;
+                }
+            }
+            
+            updateCameraStatus() {
+                if (this.camera && this.controls) {
+                    const pos = this.camera.position;
+                    const target = this.controls.target;
+                    
+                    const posStr = `(${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)})`;
+                    const targetStr = `(${target.x.toFixed(2)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)})`;
+                    
+                    const statusText = `Camera: Position${posStr} Target${targetStr}`;
+                    this.updateStatus('cameraStatus', statusText);
                 }
             }
             

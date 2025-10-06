@@ -340,8 +340,8 @@ Click 'Run' to execute your code!</div>
         <p>Initializing Pyodide and SITH API</p>
     </div>
 
-    <!-- Local Pyodide -->
-    <script src="https://syzygyx.github.io/R2-D2/pyodide/pyodide.js"></script>
+    <!-- Pyodide from CDN -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
 
     <script>
         // Python Control Component
@@ -373,9 +373,9 @@ Click 'Run' to execute your code!</div>
                 try {
                     this.log('Loading Pyodide...', 'info');
                     
-                    // Load Pyodide with full GitHub Pages URL
+                    // Load Pyodide from CDN
                     this.pyodide = await loadPyodide({
-                        indexURL: "https://syzygyx.github.io/R2-D2/pyodide/"
+                        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
                     });
                     
                     this.log('Python loaded successfully!', 'success');

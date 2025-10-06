@@ -383,6 +383,9 @@
                     this.r2d2 = fbx;
                     this.scene.add(fbx);
                     
+                    // Dynamically fit R2-D2 in the window
+                    this.fitModelInView(fbx);
+                    
                     // Create dome panels for interaction
                     this.createDomePanels(fbx);
                     
@@ -404,6 +407,50 @@
                         this.createFallbackR2D2Model();
                     }
                 });
+            }
+            
+            fitModelInView(model) {
+                // Create a bounding box for the model
+                const box = new THREE.Box3().setFromObject(model);
+                const size = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
+                
+                console.log('Model bounding box:', box);
+                console.log('Model size:', size);
+                console.log('Model center:', center);
+                
+                // Calculate the maximum dimension
+                const maxDim = Math.max(size.x, size.y, size.z);
+                
+                // Calculate the distance needed to fit the model
+                const fov = this.camera.fov * (Math.PI / 180);
+                const distance = maxDim / (2 * Math.tan(fov / 2));
+                
+                // Add some padding
+                const padding = 1.5;
+                const targetDistance = distance * padding;
+                
+                // Position camera to view the model
+                this.camera.position.set(
+                    center.x + targetDistance * 0.7,
+                    center.y + targetDistance * 0.5,
+                    center.z + targetDistance * 0.7
+                );
+                
+                // Look at the center of the model
+                this.camera.lookAt(center);
+                
+                // Update controls target
+                this.controls.target.copy(center);
+                this.controls.update();
+                
+                // Set up camera limits
+                this.controls.minDistance = targetDistance * 0.5;
+                this.controls.maxDistance = targetDistance * 3;
+                
+                console.log('Camera positioned at:', this.camera.position);
+                console.log('Camera looking at:', center);
+                console.log('Target distance:', targetDistance);
             }
             
             loadFBXWithAlternativeLoader() {
@@ -556,6 +603,22 @@
                 window.addEventListener('message', (event) => {
                     if (event.data.type === 'panel_update') {
                         this.handlePanelUpdate(event.data.command);
+                    }
+                });
+                
+                // Handle window resize to refit model
+                window.addEventListener('resize', () => {
+                    if (this.r2d2 && this.camera && this.renderer) {
+                        // Update camera aspect ratio
+                        const container = document.getElementById('viewerContainer');
+                        this.camera.aspect = container.clientWidth / container.clientHeight;
+                        this.camera.updateProjectionMatrix();
+                        
+                        // Update renderer size
+                        this.renderer.setSize(container.clientWidth, container.clientHeight);
+                        
+                        // Refit model in view
+                        this.fitModelInView(this.r2d2);
                     }
                 });
             }

@@ -686,6 +686,9 @@ sith = SITHAPI()
                 this.log('=' * 50, 'info');
                 
                 try {
+                    // Register js_output function with Pyodide
+                    this.pyodide.globals.set('js_output', this.js_output);
+                    
                     // Capture print output and ensure sith module is available
                     this.pyodide.runPython(`
 import sys

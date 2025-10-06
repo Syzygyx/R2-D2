@@ -11,6 +11,8 @@ import select
 import logging
 import threading
 from typing import Optional, Callable
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 logger = logging.getLogger(__name__)
 

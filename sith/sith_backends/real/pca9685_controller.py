@@ -18,7 +18,10 @@ except ImportError:
     logger = logging.getLogger(__name__)
     logger.warning("PCA9685 hardware libraries not available - using simulation mode")
 
-from ...sith_core.hal import ServoInterface
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from sith_core.hal import ServoInterface
 
 logger = logging.getLogger(__name__)
 

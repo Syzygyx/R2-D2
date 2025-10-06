@@ -9,7 +9,10 @@ import serial
 import time
 import logging
 from typing import Optional
-from ...sith_core.hal import MotorInterface
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from sith_core.hal import MotorInterface
 
 logger = logging.getLogger(__name__)
 

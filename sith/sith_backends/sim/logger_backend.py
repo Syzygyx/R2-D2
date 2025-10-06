@@ -7,8 +7,11 @@ Logs all commands without hardware control for testing and debugging.
 import logging
 import time
 from typing import List, Dict, Any
-from ..base import BackendBase
-from ...sith_core.hal import MotorInterface, ServoInterface, LEDInterface, SoundInterface
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from sith_backends.base import BackendBase
+from sith_core.hal import MotorInterface, ServoInterface, LEDInterface, SoundInterface
 
 logger = logging.getLogger(__name__)
 

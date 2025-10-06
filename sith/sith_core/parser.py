@@ -51,6 +51,35 @@ class ShadowParser:
             'HD': self._handle_hold_command,
         }
         
+        # Holo Projector command handlers
+        self.command_handlers[CommandType.HP] = {
+            'H0': self._handle_hp_flash,
+            'F0': self._handle_hp_flicker,
+            'ON': self._handle_hp_on,
+            'ST': self._handle_hp_stop,
+            'RD': self._handle_hp_random,
+        }
+        
+        # Display command handlers
+        self.command_handlers[CommandType.DISPLAY] = {
+            '0T': self._handle_display_type,
+            '0W': self._handle_display_wait,
+            '0M': self._handle_display_message,
+            '1M': self._handle_display_message,
+        }
+        
+        # Sound command handlers
+        self.command_handlers[CommandType.SOUND] = {
+            'S': self._handle_sound_scream,
+            'W': self._handle_sound_wave,
+            'D': self._handle_sound_disco,
+            'R': self._handle_sound_random,
+            's': self._handle_sound_stop,
+            'C': self._handle_sound_cantina,
+            'L': self._handle_sound_leia,
+            'F': self._handle_sound_faint,
+        }
+        
         # Setup command handlers
         self.setup_command_handlers = {
             'SD': self._handle_servo_direction,
@@ -286,3 +315,122 @@ class ShadowParser:
         except ValueError:
             logger.error(f"Invalid MP3 player: {args}")
             return False
+    
+    # Holo Projector handlers
+    def _handle_hp_flash(self, args: str) -> bool:
+        """Handle HP flash command (*H0xx)."""
+        try:
+            duration = int(args)
+            logger.info(f"HP flash for {duration} seconds")
+            # TODO: Implement HP flash control
+            return True
+        except ValueError:
+            logger.error(f"Invalid HP flash duration: {args}")
+            return False
+    
+    def _handle_hp_flicker(self, args: str) -> bool:
+        """Handle HP flicker command (*F0xx)."""
+        try:
+            duration = int(args)
+            logger.info(f"HP flicker for {duration} seconds")
+            # TODO: Implement HP flicker control
+            return True
+        except ValueError:
+            logger.error(f"Invalid HP flicker duration: {args}")
+            return False
+    
+    def _handle_hp_on(self, args: str) -> bool:
+        """Handle HP lights on command (*ONxx)."""
+        logger.info("HP lights on")
+        # TODO: Implement HP lights control
+        return True
+    
+    def _handle_hp_stop(self, args: str) -> bool:
+        """Handle HP stop command (*STxx)."""
+        logger.info("HP stop")
+        # TODO: Implement HP stop control
+        return True
+    
+    def _handle_hp_random(self, args: str) -> bool:
+        """Handle HP random command (*RDxx)."""
+        logger.info("HP random movement")
+        # TODO: Implement HP random control
+        return True
+    
+    # Display handlers
+    def _handle_display_type(self, args: str) -> bool:
+        """Handle display type command (@xTxx)."""
+        try:
+            display_type = int(args)
+            logger.info(f"Display type: {display_type}")
+            # TODO: Implement display type control
+            return True
+        except ValueError:
+            logger.error(f"Invalid display type: {args}")
+            return False
+    
+    def _handle_display_wait(self, args: str) -> bool:
+        """Handle display wait command (@xWxx)."""
+        try:
+            wait_time = int(args)
+            logger.info(f"Display wait: {wait_time} seconds")
+            # TODO: Implement display wait
+            return True
+        except ValueError:
+            logger.error(f"Invalid display wait time: {args}")
+            return False
+    
+    def _handle_display_message(self, args: str) -> bool:
+        """Handle display message command (@xMtext)."""
+        logger.info(f"Display message: {args}")
+        # TODO: Implement display message
+        return True
+    
+    # Sound handlers
+    def _handle_sound_scream(self, args: str) -> bool:
+        """Handle scream sound command ($S)."""
+        logger.info("Playing scream sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_wave(self, args: str) -> bool:
+        """Handle wave sound command ($W)."""
+        logger.info("Playing wave sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_disco(self, args: str) -> bool:
+        """Handle disco sound command ($D)."""
+        logger.info("Playing disco sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_random(self, args: str) -> bool:
+        """Handle random sound command ($R)."""
+        logger.info("Playing random sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_stop(self, args: str) -> bool:
+        """Handle stop sound command ($s)."""
+        logger.info("Stopping sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_cantina(self, args: str) -> bool:
+        """Handle cantina sound command ($C)."""
+        logger.info("Playing cantina sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_leia(self, args: str) -> bool:
+        """Handle Leia sound command ($L)."""
+        logger.info("Playing Leia sound")
+        # TODO: Implement sound control
+        return True
+    
+    def _handle_sound_faint(self, args: str) -> bool:
+        """Handle faint sound command ($F)."""
+        logger.info("Playing faint sound")
+        # TODO: Implement sound control
+        return True

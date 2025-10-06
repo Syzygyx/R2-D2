@@ -5,13 +5,16 @@ Implements hardware control using actual devices like Sabertooth, PCA9685, etc.
 """
 
 import logging
-from typing import List, Optional
-from ..base import BackendBase
+from typing import List, Optional, Any
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from sith_backends.base import BackendBase
+from sith_core.hal import MotorInterface, ServoInterface, LEDInterface, SoundInterface
 from .sabertooth_driver import SabertoothDriver
 from .pca9685_controller import PCA9685Controller
 from .neopixel_controller import NeoPixelController
 from .audio_controller import AudioController
-from ...sith_core.hal import MotorInterface, ServoInterface, LEDInterface, SoundInterface
 
 logger = logging.getLogger(__name__)
 

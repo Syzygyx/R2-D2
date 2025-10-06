@@ -191,15 +191,20 @@
                 </ul>
                 <h4>Available Functions:</h4>
                 <ul>
-                    <li><code>sith_api.send_command(cmd)</code> - Send raw Shadow command</li>
-                    <li><code>sith_api.open_panel(num)</code> - Open specific panel (1-16)</li>
-                    <li><code>sith_api.close_panel(num)</code> - Close specific panel (1-16)</li>
-                    <li><code>sith_api.open_all_panels()</code> - Open all panels</li>
-                    <li><code>sith_api.close_all_panels()</code> - Close all panels</li>
-                    <li><code>sith_api.run_sequence(name)</code> - Run sequence by name</li>
-                    <li><code>sith_api.get_status()</code> - Get R2-D2 status</li>
-                    <li><code>sith_api.get_panels()</code> - Get panel states</li>
-                    <li><code>sith_api.reset()</code> - Reset R2-D2</li>
+                    <li><code>sith.send_command(cmd)</code> - Send raw Shadow command</li>
+                    <li><code>sith.open_panel(num)</code> - Open specific panel (1-16)</li>
+                    <li><code>sith.close_panel(num)</code> - Close specific panel (1-16)</li>
+                    <li><code>sith.open_all_panels()</code> - Open all panels</li>
+                    <li><code>sith.close_all_panels()</code> - Close all panels</li>
+                    <li><code>sith.run_sequence(name)</code> - Run sequence by name</li>
+                    <li><code>sith.get_status()</code> - Get R2-D2 status</li>
+                    <li><code>sith.get_panels()</code> - Get panel states</li>
+                    <li><code>sith.reset()</code> - Reset R2-D2</li>
+                    <li><code>sith.set_servo(num, pos)</code> - Set servo 1-8 to position 0-180</li>
+                    <li><code>sith.set_dome_motor(dir, speed)</code> - Set dome motor (CW/CCW/STOP)</li>
+                    <li><code>sith.dome_rotate_cw(speed)</code> - Rotate dome clockwise</li>
+                    <li><code>sith.dome_rotate_ccw(speed)</code> - Rotate dome counter-clockwise</li>
+                    <li><code>sith.dome_stop()</code> - Stop dome rotation</li>
                 </ul>
             </div>
         </div>

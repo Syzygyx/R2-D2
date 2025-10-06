@@ -192,6 +192,8 @@
             <button class="control-btn" onclick="toggleWireframe()">Toggle Wireframe</button>
             <button class="control-btn" onclick="toggleLights()">Toggle Lights</button>
             <button class="control-btn" onclick="resetR2D2()">Reset R2-D2</button>
+            <button class="control-btn" onclick="toggleAnimation()">Toggle Animation</button>
+            <button class="control-btn" onclick="stopAnimation()">Stop Animation</button>
         </div>
 
         <div class="viewer-container" id="viewerContainer">
@@ -237,6 +239,9 @@
                 this.panels = [];
                 this.wireframe = false;
                 this.lightsOn = true;
+                this.mixer = null;
+                this.clock = new THREE.Clock();
+                this.currentAnimation = null;
                 
                 this.initialize3D();
                 this.setupMessageListener();
@@ -406,6 +411,9 @@
                     this.r2d2 = fbx;
                     this.scene.add(fbx);
                     
+                    // Set up animations if available
+                    this.setupAnimations(fbx);
+                    
                     // Dynamically fit R2-D2 in the window
                     this.fitModelInView(fbx);
                     
@@ -477,6 +485,56 @@
                 console.log('Camera positioned at:', this.camera.position);
                 console.log('Camera looking at:', center);
                 console.log('Target distance:', targetDistance);
+            }
+            
+            setupAnimations(model) {
+                if (model.animations && model.animations.length > 0) {
+                    console.log(`Setting up ${model.animations.length} animations:`, model.animations.map(anim => anim.name));
+                    
+                    // Create animation mixer
+                    this.mixer = new THREE.AnimationMixer(model);
+                    
+                    // Play the first animation by default
+                    const firstAnimation = model.animations[0];
+                    this.currentAnimation = this.mixer.clipAction(firstAnimation);
+                    this.currentAnimation.play();
+                    
+                    console.log(`Playing animation: ${firstAnimation.name}`);
+                    this.updateStatus('viewerStatus', `R2-D2 Model Loaded - Playing: ${firstAnimation.name}`);
+                } else {
+                    console.log('No animations found in model');
+                }
+            }
+            
+            playAnimation(animationName) {
+                if (this.mixer && this.r2d2 && this.r2d2.animations) {
+                    const animation = this.r2d2.animations.find(anim => anim.name === animationName);
+                    if (animation) {
+                        // Stop current animation
+                        if (this.currentAnimation) {
+                            this.currentAnimation.stop();
+                        }
+                        
+                        // Play new animation
+                        this.currentAnimation = this.mixer.clipAction(animation);
+                        this.currentAnimation.reset();
+                        this.currentAnimation.play();
+                        
+                        console.log(`Playing animation: ${animationName}`);
+                        this.updateStatus('viewerStatus', `Playing: ${animationName}`);
+                    } else {
+                        console.log(`Animation not found: ${animationName}`);
+                    }
+                }
+            }
+            
+            stopAnimation() {
+                if (this.currentAnimation) {
+                    this.currentAnimation.stop();
+                    this.currentAnimation = null;
+                    console.log('Animation stopped');
+                    this.updateStatus('viewerStatus', 'R2-D2 Model Loaded - Animation Stopped');
+                }
             }
             
             loadFBXWithAlternativeLoader() {
@@ -624,6 +682,12 @@
             animate() {
                 requestAnimationFrame(() => this.animate());
                 
+                // Update animation mixer
+                if (this.mixer) {
+                    const delta = this.clock.getDelta();
+                    this.mixer.update(delta);
+                }
+                
                 this.controls.update();
                 this.renderer.render(this.scene, this.camera);
                 
@@ -655,6 +719,10 @@
                 window.addEventListener('message', (event) => {
                     if (event.data.type === 'panel_update') {
                         this.handlePanelUpdate(event.data.command);
+                    } else if (event.data.type === 'servo_command') {
+                        this.handleServoCommand(event.data.command);
+                    } else if (event.data.type === 'dome_command') {
+                        this.handleDomeCommand(event.data.command);
                     }
                 });
                 
@@ -715,6 +783,111 @@
                 const openPanels = this.panels.filter(panel => panel.userData.open).length;
                 this.updateStatus('panelStatus', `${openPanels}/16 Open`);
             }
+            
+            handleServoCommand(command) {
+                // Handle servo commands - map to animations
+                console.log('Servo command received:', command);
+                
+                // Parse servo command (format: :SV<servo_num>:<position>)
+                if (command.startsWith(':SV')) {
+                    const parts = command.substring(3).split(':');
+                    const servoNum = parseInt(parts[0]);
+                    const position = parseInt(parts[1]);
+                    
+                    console.log(`Servo ${servoNum} to position ${position}`);
+                    
+                    // Map servo commands to animations
+                    this.mapServoToAnimation(servoNum, position);
+                }
+            }
+            
+            handleDomeCommand(command) {
+                // Handle dome motor commands - map to dome animations
+                console.log('Dome command received:', command);
+                
+                // Parse dome command (format: :DM<direction>:<speed>)
+                if (command.startsWith(':DM')) {
+                    const parts = command.substring(3).split(':');
+                    const direction = parts[0]; // 'CW', 'CCW', 'STOP'
+                    const speed = parseInt(parts[1]) || 0;
+                    
+                    console.log(`Dome ${direction} at speed ${speed}`);
+                    
+                    // Map dome commands to animations
+                    this.mapDomeToAnimation(direction, speed);
+                }
+            }
+            
+            mapServoToAnimation(servoNum, position) {
+                // Map servo numbers to specific animations
+                const servoAnimations = {
+                    1: 'servo1_rotate',    // Dome rotation
+                    2: 'servo2_tilt',      // Dome tilt
+                    3: 'servo3_pan',       // Head pan
+                    4: 'servo4_tilt',      // Head tilt
+                    5: 'servo5_arm',       // Left arm
+                    6: 'servo6_arm',       // Right arm
+                    7: 'servo7_leg',       // Left leg
+                    8: 'servo8_leg',       // Right leg
+                };
+                
+                const animationName = servoAnimations[servoNum];
+                if (animationName && this.r2d2 && this.r2d2.animations) {
+                    // Find animation by name or use first available
+                    const animation = this.r2d2.animations.find(anim => 
+                        anim.name.toLowerCase().includes(animationName.split('_')[0])
+                    );
+                    
+                    if (animation) {
+                        this.playAnimation(animation.name);
+                        console.log(`Playing animation for servo ${servoNum}: ${animation.name}`);
+                    } else {
+                        // Fallback to first animation
+                        this.playAnimation(this.r2d2.animations[0].name);
+                    }
+                }
+            }
+            
+            mapDomeToAnimation(direction, speed) {
+                // Map dome motor commands to dome animations
+                if (!this.r2d2 || !this.r2d2.animations) return;
+                
+                let animationName = '';
+                
+                switch (direction) {
+                    case 'CW':
+                        animationName = 'dome_rotate_cw';
+                        break;
+                    case 'CCW':
+                        animationName = 'dome_rotate_ccw';
+                        break;
+                    case 'STOP':
+                        this.stopAnimation();
+                        return;
+                    default:
+                        animationName = 'dome_idle';
+                }
+                
+                // Find dome rotation animation
+                const domeAnimation = this.r2d2.animations.find(anim => 
+                    anim.name.toLowerCase().includes('dome') || 
+                    anim.name.toLowerCase().includes('rotate') ||
+                    anim.name.toLowerCase().includes('spin')
+                );
+                
+                if (domeAnimation) {
+                    this.playAnimation(domeAnimation.name);
+                    console.log(`Playing dome animation: ${domeAnimation.name} (${direction})`);
+                    
+                    // Adjust animation speed based on motor speed
+                    if (this.currentAnimation && speed > 0) {
+                        this.currentAnimation.timeScale = speed / 100; // Normalize speed
+                    }
+                } else {
+                    // Fallback to first animation
+                    this.playAnimation(this.r2d2.animations[0].name);
+                }
+            }
         }
 
         // Global functions
@@ -763,6 +936,23 @@
                 });
                 
                 window.viewer3D.updateStatus('panelStatus', '0/16 Open');
+            }
+        }
+        
+        function toggleAnimation() {
+            if (window.viewer3D) {
+                if (window.viewer3D.currentAnimation && window.viewer3D.currentAnimation.isRunning()) {
+                    window.viewer3D.currentAnimation.paused = !window.viewer3D.currentAnimation.paused;
+                    console.log('Animation paused/resumed');
+                } else if (window.viewer3D.r2d2 && window.viewer3D.r2d2.animations && window.viewer3D.r2d2.animations.length > 0) {
+                    window.viewer3D.playAnimation(window.viewer3D.r2d2.animations[0].name);
+                }
+            }
+        }
+        
+        function stopAnimation() {
+            if (window.viewer3D) {
+                window.viewer3D.stopAnimation();
             }
         }
 

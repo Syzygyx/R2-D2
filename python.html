@@ -455,7 +455,36 @@ class SITHAPI:
         else:
             # Simulation mode
             print(f"Simulated command: {command}")
+            
+            # Send command to 3D viewer for animation
+            self.notify_3d_viewer(command)
+            
             return {'success': True, 'message': f'Simulated: {command}'}
+    
+    def notify_3d_viewer(self, command):
+        """Send command to 3D viewer for animation"""
+        try:
+            # Determine command type and send appropriate message
+            if command.startswith(':SV'):
+                # Servo command
+                parent.postMessage({
+                    'type': 'servo_command',
+                    'command': command
+                }, '*')
+            elif command.startswith(':DM'):
+                # Dome motor command
+                parent.postMessage({
+                    'type': 'dome_command', 
+                    'command': command
+                }, '*')
+            elif command.startswith(':OP') or command.startswith(':CL'):
+                # Panel command
+                parent.postMessage({
+                    'type': 'panel_update',
+                    'command': command
+                }, '*')
+        except Exception as e:
+            print(f"Error notifying 3D viewer: {e}")
     
     def open_panel(self, panel_num):
         """Open a specific panel (1-16)"""
@@ -504,6 +533,33 @@ class SITHAPI:
             return response.json()
         except Exception as e:
             return {'success': False, 'error': str(e)}
+    
+    def set_servo(self, servo_num, position):
+        """Set servo position (1-8, position 0-180)"""
+        if 1 <= servo_num <= 8 and 0 <= position <= 180:
+            return self.send_command(f':SV{servo_num}:{position}')
+        return {'success': False, 'error': 'Servo number must be 1-8, position 0-180'}
+    
+    def set_dome_motor(self, direction, speed=50):
+        """Set dome motor (CW, CCW, STOP, speed 0-100)"""
+        if direction in ['CW', 'CCW', 'STOP']:
+            if direction == 'STOP':
+                return self.send_command(':DM:STOP:0')
+            else:
+                return self.send_command(f':DM:{direction}:{speed}')
+        return {'success': False, 'error': 'Direction must be CW, CCW, or STOP'}
+    
+    def dome_rotate_cw(self, speed=50):
+        """Rotate dome clockwise"""
+        return self.set_dome_motor('CW', speed)
+    
+    def dome_rotate_ccw(self, speed=50):
+        """Rotate dome counter-clockwise"""
+        return self.set_dome_motor('CCW', speed)
+    
+    def dome_stop(self):
+        """Stop dome rotation"""
+        return self.set_dome_motor('STOP', 0)
 
 # Create global instance
 sith = SITHAPI()

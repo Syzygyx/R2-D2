@@ -181,18 +181,27 @@ To reduce wiring and improve reliability for students, SITH uses a **stacked Pi 
 
 ---
 
-# Repository & Maintainabilitysith/
+# Repository & Maintainability
+
+```
+sith/
 sith_core/          # Parser, HAL, sequence engine
 sith_backends/
-real/             # Sabertooth, PCA9685, GPIO, LEDs, sound
-sim/              # LoggerBackend, ROS 2 bridge
+  real/             # Sabertooth, PCA9685, GPIO, LEDs, sound
+  sim/              # LoggerBackend, ROS 2 bridge
 sith_emulator/      # PTY serial emulator
 sith_sequences/     # YAML routines
 simulation/         # URDF, controllers, launch files
 curriculum/         # Lessons, slides, notebooks
 docs/               # Wiring diagrams, setup, safety
-tests/              # Pytest- CI: parser & sequence tests + headless sim log checks.  
-- Style: PEP-8, short CONTRIBUTING.md.
+tests/              # Pytest unit tests
+```
+
+**Development Standards:**
+- **CI**: Parser & sequence tests + headless sim log checks
+- **Style**: PEP-8 compliance, short CONTRIBUTING.md
+- **Testing**: Unit tests, integration tests, hardware-in-the-loop tests
+- **Documentation**: Clear README, API docs, wiring diagrams
 
 ---
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Console Test</title>
+    <style>
+        body { font-family: monospace; background: #000; color: #0f0; padding: 20px; }
+        .console { background: #111; padding: 10px; margin: 10px 0; border: 1px solid #0f0; }
+        .error { color: #f00; }
+        .warn { color: #ff0; }
+        .info { color: #0ff; }
+    </style>
+</head>
+<body>
+    <h1>Console Debug Test</h1>
+    <div id="console" class="console"></div>
+    
+    <script>
+        const consoleDiv = document.getElementById('console');
+        
+        function log(type, message) {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${type.toUpperCase()}: ${message}`;
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        // Override console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            log('info', args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            log('error', args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            log('warn', args.join(' '));
+        };
+        
+        // Test loading the simulator
+        log('info', 'Starting debug test...');
+        
+        // Create iframe to test the simulator
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://syzygyx.github.io/R2-D2/simulator-goldenlayout.html';
+        iframe.style.width = '100%';
+        iframe.style.height = '600px';
+        iframe.style.border = '1px solid #0f0';
+        
+        iframe.onload = function() {
+            log('info', 'Simulator iframe loaded');
+            
+            // Try to access the Python iframe inside
+            setTimeout(() => {
+                try {
+                    const pythonIframe = iframe.contentDocument.querySelector('iframe[src*="python.html"]');
+                    if (pythonIframe) {
+                        log('info', 'Python iframe found');
+                        
+                        // Listen to Python iframe errors
+                        pythonIframe.onerror = function(e) {
+                            log('error', 'Python iframe error: ' + e.message);
+                        };
+                        
+                        // Check if Python iframe loads
+                        pythonIframe.onload = function() {
+                            log('info', 'Python iframe loaded successfully');
+                        };
+                    } else {
+                        log('warn', 'Python iframe not found');
+                    }
+                } catch (e) {
+                    log('error', 'Cross-origin error: ' + e.message);
+                }
+            }, 3000);
+        };
+        
+        iframe.onerror = function(e) {
+            log('error', 'Simulator iframe error: ' + e.message);
+        };
+        
+        document.body.appendChild(iframe);
+        
+        // Also test direct Pyodide loading
+        log('info', 'Testing direct Pyodide loading...');
+        
+        const script = document.createElement('script');
+        script.src = 'https://syzygyx.github.io/R2-D2/pyodide/pyodide.js';
+        script.onload = function() {
+            log('info', 'Pyodide script loaded successfully');
+            
+            // Test loadPyodide
+            if (typeof loadPyodide !== 'undefined') {
+                log('info', 'loadPyodide function available');
+                
+                loadPyodide({
+                    indexURL: "https://syzygyx.github.io/R2-D2/pyodide/"
+                }).then(pyodide => {
+                    log('info', 'Pyodide loaded successfully!');
+                }).catch(error => {
+                    log('error', 'Pyodide load error: ' + error.message);
+                });
+            } else {
+                log('error', 'loadPyodide function not available');
+            }
+        };
+        
+        script.onerror = function(e) {
+            log('error', 'Pyodide script load error: ' + e.message);
+        };
+        
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

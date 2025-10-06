@@ -9,10 +9,6 @@
     <!-- jQuery (required for GoldenLayout) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-    <!-- GoldenLayout CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/golden-layout@1.5.9/dist/css/goldenlayout-base.css">
-    <link rel="stylesheet" href="https://unpkg.com/golden-layout@1.5.9/dist/css/themes/goldenlayout-dark-theme.css">
-    
     <style>
         * {
             margin: 0;
@@ -72,62 +68,89 @@
             bottom: 0;
         }
 
-        /* GoldenLayout Custom Styling */
-        .lm_goldenlayout {
-            background: transparent !important;
+        /* Simulator Grid Layout */
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            height: 100%;
+            gap: 10px;
+            padding: 10px;
         }
 
-        .lm_content {
-            background: transparent !important;
-        }
-
-        .lm_item_container {
-            background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%) !important;
-            border: 2px solid #ff0000 !important;
-            border-radius: 8px !important;
+        .component-panel {
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
             box-shadow: 
                 0 0 20px rgba(255, 0, 0, 0.2),
-                inset 0 0 20px rgba(255, 0, 0, 0.1) !important;
+                inset 0 0 20px rgba(255, 0, 0, 0.1);
+            overflow: hidden;
         }
 
-        .lm_header {
-            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%) !important;
-            border-bottom: 1px solid #ff0000 !important;
+        .panel-header {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ff0000;
         }
 
-        .lm_header .lm_tab {
-            background: transparent !important;
-            color: #000 !important;
-            font-family: 'Orbitron', monospace !important;
-            font-weight: 700 !important;
-            text-shadow: none !important;
+        .panel-header h3 {
+            color: #000;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1em;
+            margin: 0;
+            text-shadow: none;
         }
 
-        .lm_header .lm_tab.lm_active {
-            background: rgba(255, 255, 255, 0.2) !important;
+        .panel-controls {
+            display: flex;
+            gap: 5px;
         }
 
-        .lm_header .lm_tab:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
+        .panel-btn {
+            background: rgba(0, 0, 0, 0.3);
+            color: #000;
+            border: 1px solid rgba(0, 0, 0, 0.5);
+            border-radius: 3px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        .lm_splitter {
-            background: #ff0000 !important;
+        .panel-btn:hover {
+            background: rgba(0, 0, 0, 0.5);
         }
 
-        .lm_splitter:hover {
-            background: #ff3333 !important;
+        .panel-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
         }
 
-        .lm_dragProxy {
-            background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%) !important;
-            border: 2px solid #ff0000 !important;
-            border-radius: 8px !important;
+        .panel-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
         }
 
-        .lm_dropTargetIndicator {
-            background: rgba(255, 0, 0, 0.3) !important;
-            border: 2px dashed #ff0000 !important;
+        .panel-collapsed .panel-content {
+            display: none;
+        }
+
+        .panel-collapsed .panel-btn {
+            content: '+';
         }
 
         /* Iframe styling */
@@ -152,9 +175,19 @@
                 top: 70px;
             }
 
-            .lm_header .lm_tab {
-                font-size: 0.8em !important;
-                padding: 5px 10px !important;
+            .simulator-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 1fr);
+                gap: 5px;
+                padding: 5px;
+            }
+
+            .component-panel {
+                min-height: 200px;
+            }
+
+            .panel-header h3 {
+                font-size: 0.9em;
             }
         }
 
@@ -165,6 +198,23 @@
 
             .main-container {
                 top: 60px;
+            }
+
+            .simulator-grid {
+                gap: 3px;
+                padding: 3px;
+            }
+
+            .component-panel {
+                min-height: 150px;
+            }
+
+            .panel-header {
+                padding: 8px 10px;
+            }
+
+            .panel-header h3 {
+                font-size: 0.8em;
             }
         }
     </style>
@@ -215,68 +265,15 @@
         </style>
     </div>
 
-    <!-- GoldenLayout JavaScript -->
-    <script src="https://unpkg.com/golden-layout@1.5.9/dist/goldenlayout.min.js"></script>
-    
-    <!-- Fallback CSS if CDN fails -->
-    <style>
-        /* GoldenLayout fallback styles */
-        .lm_goldenlayout {
-            position: relative;
-            height: 100%;
-        }
-        
-        .lm_content {
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .lm_item_container {
-            position: absolute;
-            overflow: hidden;
-        }
-        
-        .lm_header {
-            height: 20px;
-            position: relative;
-            z-index: 3;
-        }
-        
-        .lm_tab {
-            display: inline-block;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        
-        .lm_splitter {
-            position: absolute;
-            z-index: 4;
-        }
-        
-        .lm_splitter.lm_horizontal {
-            height: 2px;
-            width: 100%;
-            cursor: row-resize;
-        }
-        
-        .lm_splitter.lm_vertical {
-            width: 2px;
-            height: 100%;
-            cursor: col-resize;
-        }
-    </style>
+    <!-- Use a simpler approach without GoldenLayout for now -->
 
     <script>
-        // SITH Simulator with GoldenLayout
+        // SITH Simulator with Grid Layout
         class SITHSimulator {
             constructor() {
-                this.layout = null;
                 this.loadingScreen = document.getElementById('loadingScreen');
                 this.loadingText = document.getElementById('loadingText');
-                this.initializeLayout().catch(error => {
-                    console.error('Failed to initialize layout:', error);
-                    this.updateLoadingText(`Initialization failed: ${error.message}`);
-                });
+                this.initializeLayout();
                 this.setupMessageHandlers();
             }
 
@@ -292,157 +289,13 @@
                 }
             }
 
-            async initializeLayout() {
+            initializeLayout() {
                 try {
-                    this.updateLoadingText('Loading dependencies...');
+                    this.updateLoadingText('Creating grid layout...');
                     
-                    // Wait for jQuery to load
-                    let attempts = 0;
-                    while (typeof $ === 'undefined' && attempts < 50) {
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        attempts++;
-                    }
+                    // Create a simple grid layout
+                    this.createGridLayout();
                     
-                    if (typeof $ === 'undefined') {
-                        throw new Error('jQuery failed to load');
-                    }
-                    
-                    this.updateLoadingText('Loading GoldenLayout...');
-                    
-                    // Wait for GoldenLayout to load
-                    attempts = 0;
-                    while (typeof GoldenLayout === 'undefined' && attempts < 50) {
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        attempts++;
-                    }
-                    
-                    if (typeof GoldenLayout === 'undefined') {
-                        throw new Error('GoldenLayout failed to load');
-                    }
-
-                    this.updateLoadingText('Creating layout configuration...');
-                    
-                    const config = {
-                    content: [{
-                        type: 'row',
-                        content: [
-                            {
-                                type: 'column',
-                                width: 50,
-                                content: [
-                                    {
-                                        type: 'component',
-                                        componentName: 'python',
-                                        title: '🐍 Python Control',
-                                        componentState: {}
-                                    },
-                                    {
-                                        type: 'component',
-                                        componentName: 'demos',
-                                        title: '📚 Demos',
-                                        componentState: {}
-                                    }
-                                ]
-                            },
-                            {
-                                type: 'column',
-                                width: 50,
-                                content: [
-                                    {
-                                        type: 'component',
-                                        componentName: 'viewer',
-                                        title: '🤖 3D Viewer',
-                                        componentState: {}
-                                    },
-                                    {
-                                        type: 'component',
-                                        componentName: 'help',
-                                        title: '❓ Help',
-                                        componentState: {}
-                                    }
-                                ]
-                            }
-                        ]
-                    }],
-                    dimensions: {
-                        borderWidth: 2,
-                        minItemHeight: 200,
-                        minItemWidth: 200
-                    },
-                    settings: {
-                        showPopoutIcon: false,
-                        showMaximiseIcon: true,
-                        showCloseIcon: false,
-                        showPopoutIcon: false,
-                        responsiveMode: 'always'
-                    }
-                };
-
-                    this.updateLoadingText('Creating GoldenLayout instance...');
-                    
-                    // Create GoldenLayout instance
-                    this.layout = new GoldenLayout(config, '#mainContainer');
-
-                    this.updateLoadingText('Registering components...');
-
-                    // Register components
-                    this.layout.registerComponent('python', (container, componentState) => {
-                        this.updateLoadingText('Loading Python component...');
-                        const iframe = document.createElement('iframe');
-                        iframe.src = 'python.html';
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.border = 'none';
-                        iframe.onload = () => {
-                            this.updateLoadingText('Python component loaded');
-                        };
-                        container.getElement().append(iframe);
-                    });
-
-                    this.layout.registerComponent('viewer', (container, componentState) => {
-                        this.updateLoadingText('Loading 3D Viewer component...');
-                        const iframe = document.createElement('iframe');
-                        iframe.src = 'viewer.html';
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.border = 'none';
-                        iframe.onload = () => {
-                            this.updateLoadingText('3D Viewer component loaded');
-                        };
-                        container.getElement().append(iframe);
-                    });
-
-                    this.layout.registerComponent('demos', (container, componentState) => {
-                        this.updateLoadingText('Loading Demos component...');
-                        const iframe = document.createElement('iframe');
-                        iframe.src = 'demos.html';
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.border = 'none';
-                        iframe.onload = () => {
-                            this.updateLoadingText('Demos component loaded');
-                        };
-                        container.getElement().append(iframe);
-                    });
-
-                    this.layout.registerComponent('help', (container, componentState) => {
-                        this.updateLoadingText('Loading Help component...');
-                        const iframe = document.createElement('iframe');
-                        iframe.src = 'help.html';
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.border = 'none';
-                        iframe.onload = () => {
-                            this.updateLoadingText('Help component loaded');
-                        };
-                        container.getElement().append(iframe);
-                    });
-
-                    this.updateLoadingText('Initializing layout...');
-
-                    // Initialize the layout
-                    this.layout.init();
-
                     this.updateLoadingText('Simulator ready!');
                     
                     // Hide loading screen after a short delay
@@ -453,43 +306,74 @@
                 } catch (error) {
                     console.error('Error initializing simulator:', error);
                     this.updateLoadingText(`Error: ${error.message}`);
-                    
-                    // Try fallback layout
-                    setTimeout(() => {
-                        this.createFallbackLayout();
-                    }, 1000);
                 }
             }
 
-            createFallbackLayout() {
-                this.updateLoadingText('Creating fallback layout...');
-                
+            createGridLayout() {
                 const container = document.getElementById('mainContainer');
                 container.innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 100%; gap: 10px;">
-                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
-                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">🐍 Python Control</div>
-                            <iframe src="python.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                    <div class="simulator-grid">
+                        <div class="component-panel" id="python-panel">
+                            <div class="panel-header">
+                                <h3>🐍 Python Control</h3>
+                                <div class="panel-controls">
+                                    <button class="panel-btn" onclick="togglePanel('python')">−</button>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <iframe src="python.html" id="python-iframe"></iframe>
+                            </div>
                         </div>
-                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
-                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">🤖 3D Viewer</div>
-                            <iframe src="viewer.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        
+                        <div class="component-panel" id="viewer-panel">
+                            <div class="panel-header">
+                                <h3>🤖 3D Viewer</h3>
+                                <div class="panel-controls">
+                                    <button class="panel-btn" onclick="togglePanel('viewer')">−</button>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <iframe src="viewer.html" id="viewer-iframe"></iframe>
+                            </div>
                         </div>
-                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
-                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">📚 Demos</div>
-                            <iframe src="demos.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        
+                        <div class="component-panel" id="demos-panel">
+                            <div class="panel-header">
+                                <h3>📚 Demos</h3>
+                                <div class="panel-controls">
+                                    <button class="panel-btn" onclick="togglePanel('demos')">−</button>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <iframe src="demos.html" id="demos-iframe"></iframe>
+                            </div>
                         </div>
-                        <div style="border: 2px solid #ff0000; border-radius: 8px; background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);">
-                            <div style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); padding: 10px; border-radius: 6px 6px 0 0; color: #000; font-weight: bold;">❓ Help</div>
-                            <iframe src="help.html" style="width: 100%; height: calc(100% - 40px); border: none;"></iframe>
+                        
+                        <div class="component-panel" id="help-panel">
+                            <div class="panel-header">
+                                <h3>❓ Help</h3>
+                                <div class="panel-controls">
+                                    <button class="panel-btn" onclick="togglePanel('help')">−</button>
+                                </div>
+                            </div>
+                            <div class="panel-content">
+                                <iframe src="help.html" id="help-iframe"></iframe>
+                            </div>
                         </div>
                     </div>
                 `;
-                
-                this.updateLoadingText('Fallback layout created');
-                setTimeout(() => {
-                    this.hideLoadingScreen();
-                }, 1000);
+            }
+
+            // Panel toggle functionality
+            togglePanel(panelName) {
+                const panel = document.getElementById(`${panelName}-panel`);
+                if (panel) {
+                    panel.classList.toggle('panel-collapsed');
+                    const btn = panel.querySelector('.panel-btn');
+                    if (btn) {
+                        btn.textContent = panel.classList.contains('panel-collapsed') ? '+' : '−';
+                    }
+                }
             }
 
 
@@ -558,16 +442,46 @@
             }
         }
 
+        // Global functions for external access
+        function togglePanel(panelName) {
+            if (window.simulator) {
+                window.simulator.togglePanel(panelName);
+            }
+        }
+
+        function resetCamera() {
+            const iframe = document.getElementById('viewer-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'resetCamera' }, '*');
+            }
+        }
+
+        function toggleWireframe() {
+            const iframe = document.getElementById('viewer-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'toggleWireframe' }, '*');
+            }
+        }
+
+        function toggleLights() {
+            const iframe = document.getElementById('viewer-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'toggleLights' }, '*');
+            }
+        }
+
+        function resetR2D2() {
+            const iframe = document.getElementById('viewer-iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'resetR2D2' }, '*');
+            }
+        }
+
         // Initialize simulator when page loads
         let simulator;
         document.addEventListener('DOMContentLoaded', () => {
             simulator = new SITHSimulator();
             window.simulator = simulator;
-
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                simulator.handleResize();
-            });
         });
 
         // Mobile touch handling

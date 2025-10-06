@@ -39,6 +39,8 @@ jobs:
       - name: Build documentation
         run: |
           echo "Building documentation..."
+          # Create docs directory
+          mkdir -p docs
           # Create a simple documentation index
           cat > docs/index.md << 'EOF'
           # SITH Documentation

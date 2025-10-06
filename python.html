@@ -465,7 +465,7 @@ class SITHAPI:
     def get_status(self):
         """Get current R2-D2 status"""
         try:
-            response = self.session.get(f'{this.base_url}/api/status')
+            response = self.session.get(f'{self.base_url}/api/status')
             return response.json()
         except Exception as e:
             return {'success': False, 'error': str(e)}
@@ -473,7 +473,7 @@ class SITHAPI:
     def get_panels(self):
         """Get current panel states"""
         try:
-            response = self.session.get(f'{this.base_url}/api/panels')
+            response = self.session.get(f'{self.base_url}/api/panels')
             return response.json()
         except Exception as e:
             return {'success': False, 'error': str(e)}
@@ -481,7 +481,7 @@ class SITHAPI:
     def reset(self):
         """Reset R2-D2 to default state"""
         try:
-            response = self.session.post(f'{this.base_url}/api/reset')
+            response = self.session.post(f'{self.base_url}/api/reset')
             return response.json()
         except Exception as e:
             return {'success': False, 'error': str(e)}
@@ -490,7 +490,83 @@ class SITHAPI:
 sith_api = SITHAPI()
 `;
                 
-                this.pyodide.runPython(sithApiCode);
+                try {
+                    this.pyodide.runPython(sithApiCode);
+                    this.log('SITH API module created successfully', 'success');
+                } catch (error) {
+                    this.log(`Error creating SITH API module: ${error.message}`, 'error');
+                    console.error('SITH API creation error:', error);
+                    
+                    // Create a fallback mock API
+                    this.createFallbackAPI();
+                }
+            }
+            
+            createFallbackAPI() {
+                const fallbackApiCode = `
+class SITHAPI:
+    def __init__(self, base_url='http://localhost:5000'):
+        self.base_url = base_url
+        print("SITH API running in simulation mode (no real hardware)")
+    
+    def send_command(self, command):
+        """Simulate sending a Shadow command to R2-D2"""
+        print(f"Simulated command: {command}")
+        return {'success': True, 'message': f'Simulated: {command}'}
+    
+    def open_panel(self, panel_num):
+        """Simulate opening a panel"""
+        if 1 <= panel_num <= 16:
+            print(f"Simulated: Opening panel {panel_num}")
+            return {'success': True, 'message': f'Simulated: Opened panel {panel_num}'}
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def close_panel(self, panel_num):
+        """Simulate closing a panel"""
+        if 1 <= panel_num <= 16:
+            print(f"Simulated: Closing panel {panel_num}")
+            return {'success': True, 'message': f'Simulated: Closed panel {panel_num}'}
+        return {'success': False, 'error': 'Panel number must be 1-16'}
+    
+    def open_all_panels(self):
+        """Simulate opening all panels"""
+        print("Simulated: Opening all panels")
+        return {'success': True, 'message': 'Simulated: Opened all panels'}
+    
+    def close_all_panels(self):
+        """Simulate closing all panels"""
+        print("Simulated: Closing all panels")
+        return {'success': True, 'message': 'Simulated: Closed all panels'}
+    
+    def run_sequence(self, sequence_name):
+        """Simulate running a sequence"""
+        print(f"Simulated: Running sequence {sequence_name}")
+        return {'success': True, 'message': f'Simulated: Ran sequence {sequence_name}'}
+    
+    def get_status(self):
+        """Simulate getting status"""
+        return {'success': True, 'status': 'simulation_mode', 'panels': 'all_closed'}
+    
+    def get_panels(self):
+        """Simulate getting panel states"""
+        return {'success': True, 'panels': [False] * 16}
+    
+    def reset(self):
+        """Simulate reset"""
+        print("Simulated: Resetting R2-D2")
+        return {'success': True, 'message': 'Simulated: Reset complete'}
+
+# Create global instance
+sith_api = SITHAPI()
+`;
+                
+                try {
+                    this.pyodide.runPython(fallbackApiCode);
+                    this.log('Fallback SITH API created (simulation mode)', 'info');
+                } catch (error) {
+                    this.log(`Error creating fallback API: ${error.message}`, 'error');
+                    console.error('Fallback API creation error:', error);
+                }
             }
             
             async runScript() {

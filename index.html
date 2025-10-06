@@ -12,10 +12,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #fff;
+            font-family: 'Orbitron', 'Courier New', monospace;
+            background: radial-gradient(ellipse at center, #1a0000 0%, #000000 100%);
+            color: #ff0000;
             min-height: 100vh;
+            text-shadow: 0 0 10px #ff0000;
         }
 
         .container {
@@ -57,21 +58,40 @@
         }
 
         .app-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            border: 2px solid #ff0000;
+            border-radius: 15px;
+            padding: 25px;
             text-decoration: none;
             color: inherit;
-            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 0 30px rgba(255, 0, 0, 0.2),
+                inset 0 0 30px rgba(255, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
         }
 
         .app-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255,255,255,0.15);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
+            box-shadow: 
+                0 0 40px rgba(255, 0, 0, 0.4),
+                inset 0 0 40px rgba(255, 0, 0, 0.2);
+        }
+
+        .app-card.featured {
+            border: 3px solid #ff0000;
+            box-shadow: 
+                0 0 40px rgba(255, 0, 0, 0.4),
+                inset 0 0 40px rgba(255, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        .app-card.featured:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 50px rgba(255, 0, 0, 0.6),
+                inset 0 0 50px rgba(255, 0, 0, 0.3);
         }
 
         .app-icon {
@@ -83,8 +103,9 @@
         .app-title {
             font-size: 1.8em;
             margin-bottom: 15px;
-            color: #FFD700;
+            color: #ff0000;
             text-align: center;
+            text-shadow: 0 0 10px #ff0000;
         }
 
         .app-description {
@@ -202,63 +223,20 @@
         </header>
 
         <div class="apps-grid">
-            <a href="sith/web_simulator/3d_simulator.html" class="app-card">
-                <div class="app-icon">🤖</div>
-                <div class="app-title">3D R2-D2 Simulator</div>
+            <a href="simulator.html" class="app-card featured">
+                <div class="app-icon">🤖🐍</div>
+                <div class="app-title">Integrated R2-D2 Simulator</div>
                 <div class="app-description">
-                    Interactive 3D R2-D2 model with realistic dome panels, Shadow command processing, and immersive 3D visualization using Three.js.
+                    Complete integrated simulator combining Python control, 3D visualization, and Shadow protocol processing. Write Python scripts to control R2-D2 while watching real-time 3D feedback.
                 </div>
                 <ul class="app-features">
-                    <li>Full 3D R2-D2 model</li>
+                    <li>Python interpreter in browser (Pyodide)</li>
+                    <li>Real-time 3D R2-D2 visualization</li>
                     <li>16 animated dome panels</li>
-                    <li>Real-time 3D rendering</li>
-                    <li>Camera controls & lighting</li>
-                    <li>Shadow command processing</li>
-                </ul>
-            </a>
-
-            <a href="sith/web_simulator/python_simulator.html" class="app-card">
-                <div class="app-icon">🐍</div>
-                <div class="app-title">Python Simulator</div>
-                <div class="app-description">
-                    Python interpreter in the browser with SITH API integration. Write and run Python scripts to control R2-D2 using Shadow protocol commands.
-                </div>
-                <ul class="app-features">
-                    <li>Python in WebAssembly (Pyodide)</li>
-                    <li>SITH API integration</li>
-                    <li>Shadow protocol demos</li>
-                    <li>Real-time code execution</li>
-                    <li>Comprehensive test suite</li>
-                </ul>
-            </a>
-
-            <a href="sith/web_simulator/static_simulator.html" class="app-card">
-                <div class="app-icon">🎭</div>
-                <div class="app-title">2D R2-D2 Simulator</div>
-                <div class="app-description">
-                    Interactive web-based R2-D2 dome simulator with visual panel control, Shadow command processing, and real-time sequence execution.
-                </div>
-                <ul class="app-features">
-                    <li>16 interactive dome panels</li>
-                    <li>Shadow command processing</li>
-                    <li>Real-time visual feedback</li>
-                    <li>Pre-built sequences (Wave, Scream)</li>
-                    <li>Command logging and status</li>
-                </ul>
-            </a>
-
-            <a href="sith/web_simulator/sequencer.html" class="app-card">
-                <div class="app-icon">🎬</div>
-                <div class="app-title">Sequence Editor</div>
-                <div class="app-description">
-                    Visual sequence editor for creating custom R2-D2 panel choreography with precise timing control and real-time preview.
-                </div>
-                <ul class="app-features">
-                    <li>Visual step editor</li>
-                    <li>Drag-and-drop reordering</li>
-                    <li>Timeline visualization</li>
-                    <li>Preset sequences</li>
-                    <li>Real-time playback</li>
+                    <li>Shadow protocol integration</li>
+                    <li>Interactive camera controls</li>
+                    <li>Comprehensive demo scripts</li>
+                    <li>Local Pyodide for fast loading</li>
                 </ul>
             </a>
         </div>

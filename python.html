@@ -271,35 +271,35 @@
         <textarea class="code-editor" id="codeEditor" placeholder="# SITH Python Control
 # Write your Python code here to control R2-D2
 
-import sith_api
+import sith
 
 # Example: Open all panels
-sith_api.open_all_panels()
+sith.open_all_panels()
 
 # Example: Run a sequence
-sith_api.run_sequence('wave')
+sith.run_sequence('wave')
 
 # Example: Send custom Shadow command
-sith_api.send_command(':OP01')  # Open panel 1
+sith.send_command(':OP01')  # Open panel 1
 
 # Example: Get status
-status = sith_api.get_status()
+status = sith.get_status()
 print(f'R2-D2 Status: {status}')"># SITH Python Control
 # Write your Python code here to control R2-D2
 
-import sith_api
+import sith
 
 # Example: Open all panels
-sith_api.open_all_panels()
+sith.open_all_panels()
 
 # Example: Run a sequence
-sith_api.run_sequence('wave')
+sith.run_sequence('wave')
 
 # Example: Send custom Shadow command
-sith_api.send_command(':OP01')  # Open panel 1
+sith.send_command(':OP01')  # Open panel 1
 
 # Example: Get status
-status = sith_api.get_status()
+status = sith.get_status()
 print(f'R2-D2 Status: {status}')
 </textarea>
 
@@ -307,17 +307,17 @@ print(f'R2-D2 Status: {status}')
 
 SITH Python Control v1.0
 =========================
-- Use sith_api module to control R2-D2
+- Use sith module to control R2-D2
 - Available functions:
-  * sith_api.send_command(cmd)
-  * sith_api.open_panel(num)
-  * sith_api.close_panel(num)
-  * sith_api.open_all_panels()
-  * sith_api.close_all_panels()
-  * sith_api.run_sequence(name)
-  * sith_api.get_status()
-  * sith_api.get_panels()
-  * sith_api.reset()
+  * sith.send_command(cmd)
+  * sith.open_panel(num)
+  * sith.close_panel(num)
+  * sith.open_all_panels()
+  * sith.close_all_panels()
+  * sith.run_sequence(name)
+  * sith.get_status()
+  * sith.get_panels()
+  * sith.reset()
 
 Click 'Run' to execute your code!</div>
 
@@ -398,12 +398,21 @@ Click 'Run' to execute your code!</div>
                     // Create SITH API module
                     this.createSITHAPIModule();
                     
+                    // Verify SITH API was created
+                    try {
+                        const testResult = this.pyodide.runPython('sith.get_status()');
+                        this.log('SITH API verified and ready!', 'success');
+                        this.updateStatus('apiStatus', 'Connected');
+                    } catch (error) {
+                        this.log('SITH API verification failed, using fallback', 'warning');
+                        this.updateStatus('apiStatus', 'Simulation Mode');
+                    }
+                    
                     // Hide loading screen
                     document.getElementById('loading').style.display = 'none';
                     
                     this.log('Python control ready!', 'success');
                     this.updateStatus('pythonStatus', 'Ready');
-                    this.updateStatus('apiStatus', 'Connected');
                     
                 } catch (error) {
                     this.log(`Error initializing Python: ${error.message}`, 'error');
@@ -487,7 +496,7 @@ class SITHAPI:
             return {'success': False, 'error': str(e)}
 
 # Create global instance
-sith_api = SITHAPI()
+sith = SITHAPI()
 `;
                 
                 try {
@@ -557,7 +566,7 @@ class SITHAPI:
         return {'success': True, 'message': 'Simulated: Reset complete'}
 
 # Create global instance
-sith_api = SITHAPI()
+sith = SITHAPI()
 `;
                 
                 try {
@@ -579,6 +588,14 @@ sith_api = SITHAPI()
                 if (!code.trim()) {
                     this.log('No code to execute!', 'error');
                     return;
+                }
+                
+                // Check if SITH API exists, create fallback if needed
+                try {
+                    this.pyodide.runPython('sith');
+                } catch (error) {
+                    this.log('SITH API not found, creating fallback...', 'warning');
+                    this.createFallbackAPI();
                 }
                 
                 this.isRunning = true;

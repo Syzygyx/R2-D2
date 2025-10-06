@@ -323,38 +323,58 @@
                     fbx.scale.setScalar(0.1); // Adjust scale as needed
                     fbx.position.set(0, 0, 0);
                     
-                    // Enable shadows
+                    // Enable shadows and apply materials
                     fbx.traverse((child) => {
                         if (child.isMesh) {
                             child.castShadow = true;
                             child.receiveShadow = true;
                             
-                            // Apply textures if available
-                            if (child.material) {
-                                const textureLoader = new THREE.TextureLoader();
-                                
-                                // Load R2-D2 textures
-                                const diffuseTexture = textureLoader.load('models/r2d2/R2D2_Diffuse_1.png');
-                                const specularTexture = textureLoader.load('models/r2d2/R2D2_Specular_1.png');
-                                const illuminationTexture = textureLoader.load('models/r2d2/R2D2_Illumination.png');
-                                const reflectionTexture = textureLoader.load('models/r2d2/R2D2_Reflection_1.png');
-                                
-                                // Update material with textures
-                                if (child.material.map) {
-                                    child.material.map = diffuseTexture;
-                                }
-                                if (child.material.specularMap) {
-                                    child.material.specularMap = specularTexture;
-                                }
-                                if (child.material.emissiveMap) {
-                                    child.material.emissiveMap = illuminationTexture;
-                                }
-                                if (child.material.envMap) {
-                                    child.material.envMap = reflectionTexture;
-                                }
-                                
-                                child.material.needsUpdate = true;
-                            }
+                            console.log('Processing mesh:', child.name, child.material);
+                            
+                            // Create new material with textures
+                            const textureLoader = new THREE.TextureLoader();
+                            
+                            // Load R2-D2 textures with error handling
+                            const diffuseTexture = textureLoader.load(
+                                'models/r2d2/R2D2_Diffuse_1.png',
+                                (texture) => console.log('Diffuse texture loaded'),
+                                undefined,
+                                (error) => console.error('Error loading diffuse texture:', error)
+                            );
+                            const specularTexture = textureLoader.load(
+                                'models/r2d2/R2D2_Specular_1.png',
+                                (texture) => console.log('Specular texture loaded'),
+                                undefined,
+                                (error) => console.error('Error loading specular texture:', error)
+                            );
+                            const illuminationTexture = textureLoader.load(
+                                'models/r2d2/R2D2_Illumination.png',
+                                (texture) => console.log('Illumination texture loaded'),
+                                undefined,
+                                (error) => console.error('Error loading illumination texture:', error)
+                            );
+                            const reflectionTexture = textureLoader.load(
+                                'models/r2d2/R2D2_Reflection_1.png',
+                                (texture) => console.log('Reflection texture loaded'),
+                                undefined,
+                                (error) => console.error('Error loading reflection texture:', error)
+                            );
+                            
+                            // Create new material with textures
+                            const newMaterial = new THREE.MeshPhongMaterial({
+                                map: diffuseTexture,
+                                specularMap: specularTexture,
+                                emissiveMap: illuminationTexture,
+                                envMap: reflectionTexture,
+                                shininess: 100,
+                                transparent: true
+                            });
+                            
+                            // Apply the new material
+                            child.material = newMaterial;
+                            child.material.needsUpdate = true;
+                            
+                            console.log('Applied new material to:', child.name);
                         }
                     });
                     

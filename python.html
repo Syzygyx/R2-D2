@@ -383,10 +383,10 @@ Click 'Run' to execute your code!</div>
                     // Install required packages
                     await this.pyodide.loadPackage(['micropip']);
                     
-                    // Install requests using micropip
-                    await this.pyodide.runPythonAsync(`
+                    // Install requests using micropip (synchronous approach)
+                    this.pyodide.runPython(`
                         import micropip
-                        await micropip.install(['requests'])
+                        micropip.install(['requests'])
                     `);
                     
                     // Create SITH API module
@@ -630,7 +630,17 @@ sys.stderr = capture
                     }
                     
                 } catch (error) {
-                    this.log(`Error: ${error.message}`, 'error');
+                    let errorMessage = error.message;
+                    
+                    // Provide helpful error messages for common issues
+                    if (errorMessage.includes('asyncio.run() cannot be called from a running event loop')) {
+                        errorMessage = `asyncio.run() Error: Cannot use asyncio.run() in this environment. 
+Try using: await your_async_function() instead of asyncio.run(your_async_function())`;
+                    } else if (errorMessage.includes('No module named')) {
+                        errorMessage = `Module Error: ${errorMessage}. Make sure you're using the correct module name.`;
+                    }
+                    
+                    this.log(`Error: ${errorMessage}`, 'error');
                 } finally {
                     this.isRunning = false;
                     this.updateStatus('pythonStatus', 'Ready');

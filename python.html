@@ -384,15 +384,9 @@ Click 'Run' to execute your code!</div>
                     await this.pyodide.loadPackage(['micropip']);
                     
                     // Install requests using micropip
-                    this.pyodide.runPython(`
+                    await this.pyodide.runPythonAsync(`
                         import micropip
-                        import asyncio
-                        
-                        async def install_requests():
-                            await micropip.install(['requests'])
-                        
-                        # Run the async function
-                        asyncio.run(install_requests())
+                        await micropip.install(['requests'])
                     `);
                     
                     // Create SITH API module
